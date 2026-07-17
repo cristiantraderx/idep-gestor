@@ -247,7 +247,7 @@ export function AssistantBot() {
           quickActions: QUICK_ACTIONS,
         },
       ]);
-    }, response ? 800 : 1200);
+    }, Response ? 800 : 1200);
   }, [inputText]);
 
   // Handle enter key

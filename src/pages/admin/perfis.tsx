@@ -241,7 +241,7 @@ export function AdminPerfisPage() {
                       </div>
                     </div>
                     {perfil.sistema && (
-                      <Lock className="h-3.5 w-3.5 text-muted-foreground/40" title="Perfil do sistema" />
+                      <Lock className="h-3.5 w-3.5 text-muted-foreground/40"  />
                     )}
                   </div>
 

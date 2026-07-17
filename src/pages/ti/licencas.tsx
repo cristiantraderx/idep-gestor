@@ -41,7 +41,7 @@ const STATUS_LIC_OPTIONS = [
 const statusVariant: Record<string, "success" | "warning" | "default" | "destructive"> = {
   ativa: "success",
   expirada: "destructive",
-  cancelada: "secondary",
+  cancelada: "default",
 };
 
 export function LicencasPage() {

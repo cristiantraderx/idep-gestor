@@ -863,10 +863,6 @@ export interface Database {
       laboratorios: { Row: Laboratorio };
       projetos: { Row: Projeto };
       indicadores_bi: { Row: IndicadorBI };
-      sugestoes: { Row: Sugestao };
-      eventos: { Row: Evento };
-      salas: { Row: Sala };
-      laboratorios: { Row: Laboratorio };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
