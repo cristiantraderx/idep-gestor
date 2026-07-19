@@ -8,6 +8,7 @@ import {
 } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { User, Session } from "@supabase/supabase-js";
+import { PERFIL_UUIDS } from "@/constants/perfis";
 
 export type AuthError = {
   message: string;
@@ -25,6 +26,12 @@ interface AuthContextType {
   logout: () => Promise<void>;
   resetPassword: (email: string) => Promise<AuthError | null>;
   updatePassword: (password: string) => Promise<AuthError | null>;
+}
+
+// Tipo para o retorno da query .select("nome, perfis(nome)")
+interface UsuarioComPerfil {
+  nome: string;
+  perfis: { nome: string } | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -56,24 +63,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               auth_user_id: userId,
               nome: email.split("@")[0] || "Usuário",
               email,
-              perfil_id: "20000000-0000-0000-0000-000000000017", // Visitante
+              perfil_id: PERFIL_UUIDS.VISITANTE,
             })
             .select("nome, perfis(nome)")
             .single();
 
           if (newProfile) {
+            const typed = newProfile as unknown as UsuarioComPerfil;
             setProfile({
-              nome: (newProfile as any).nome,
-              perfil: ((newProfile as any).perfis as any)?.nome || "Visitante",
+              nome: typed.nome,
+              perfil: typed.perfis?.nome || "Visitante",
             });
           }
         }
         return;
       }
 
+      const typed = data as unknown as UsuarioComPerfil;
       setProfile({
-        nome: (data as any).nome,
-        perfil: ((data as any).perfis as any)?.nome || "Usuário",
+        nome: typed.nome,
+        perfil: typed.perfis?.nome || "Usuário",
       });
     } catch (err) {
       console.error("Erro ao buscar perfil do usuário:", err);
@@ -141,7 +150,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           auth_user_id: data.user.id,
           nome,
           email,
-          perfil_id: "20000000-0000-0000-0000-000000000007", // Aluno
+          perfil_id: PERFIL_UUIDS.ALUNO,
         });
 
         if (profileError) {

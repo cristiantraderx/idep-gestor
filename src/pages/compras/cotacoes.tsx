@@ -41,11 +41,10 @@ export function CotacoesPage() {
         supabase.from("cotacoes").select("*, unidades(nome, sigla)").order("created_at", { ascending: false }),
         supabase.from("unidades").select("*").eq("ativo", true).order("nome"),
       ]);
-      if (res.data) setData((res.data as any[]).map((i) => ({ ...i, unidade_nome: i.unidades?.nome || "Não definida" })));
+      if (res.data) setData((res.data as Record<string, unknown>[]).map((i: Record<string, unknown>) => ({ ...i, unidade_nome: (i.unidades as Record<string, unknown> | undefined)?.nome as string || "Não definida" })));
       if (unidRes.data) setUnidades(unidRes.data);
     } catch (err) { console.error(err); } finally { setLoading(false); }
-  }, []);
-  useEffect(() => { fetchData(); }, [fetchData]);
+  }, []);  useEffect(() => { let c = false; queueMicrotask(() => { if (!c) fetchData(); }); return () => { c = true; }; }, [fetchData]);
   const unidadeOptions = unidades.map((u) => ({ value: u.id, label: `${u.nome} (${u.sigla})` }));
 
   const openCreate = () => { setEditing(null); setForm({ fornecedor_nome: "", fornecedor_cnpj: "", descricao_itens: "", valor_total: "", data_cotacao: new Date().toISOString().split("T")[0], data_validade: "", prazo_entrega: "", status: "solicitada", observacoes: "", unidade_id: "" }); setFormError(""); setModalOpen(true); };
@@ -59,7 +58,7 @@ export function CotacoesPage() {
       if (editing) { const { error } = await supabase.from("cotacoes").update(payload).eq("id", editing.id); if (error) { setFormError(error.message); return; } }
       else { const { error } = await supabase.from("cotacoes").insert(payload); if (error) { setFormError(error.message); return; } }
       setModalOpen(false); fetchData();
-    } catch (err: any) { setFormError(err.message || "Erro"); } finally { setSaving(false); }
+    } catch (err: unknown) { setFormError(err instanceof Error ? err.message : "Erro"); } finally { setSaving(false); }
   };
   const handleDelete = async (id: string) => {
     const { error } = await supabase.from("cotacoes").delete().eq("id", id);

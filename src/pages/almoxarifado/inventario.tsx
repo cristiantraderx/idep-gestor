@@ -10,7 +10,7 @@ import { Dialog, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { cn, formatFullDate } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 export function InventarioPage() {
   const [data, setData] = useState<(Item & { unidade_nome?: string })[]>([]);
@@ -33,11 +33,10 @@ export function InventarioPage() {
         supabase.from("itens").select("*, unidades(nome, sigla)").order("nome"),
         supabase.from("unidades").select("*").eq("ativo", true).order("nome"),
       ]);
-      if (res.data) setData((res.data as any[]).map((i) => ({ ...i, unidade_nome: i.unidades?.nome || "Não definida" })));
+      if (res.data) setData((res.data as Record<string, unknown>[]).map((i: Record<string, unknown>) => ({ ...i, unidade_nome: (i.unidades as Record<string, unknown> | undefined)?.nome as string || "Não definida" })));
       if (unidRes.data) setUnidades(unidRes.data);
     } catch (err) { console.error(err); } finally { setLoading(false); }
-  }, []);
-  useEffect(() => { fetchData(); }, [fetchData]);
+  }, []);  useEffect(() => { let c = false; queueMicrotask(() => { if (!c) fetchData(); }); return () => { c = true; }; }, [fetchData]);
   const unidadeOptions = unidades.map((u) => ({ value: u.id, label: `${u.nome} (${u.sigla})` }));
 
   const openCreate = () => { setEditing(null); setForm({ nome: "", codigo: "", descricao: "", unidade_medida: "un", quantidade_minima: "5", quantidade_atual: "0", valor_unitario: "", localizacao: "", unidade_id: "" }); setFormError(""); setModalOpen(true); };
@@ -51,7 +50,7 @@ export function InventarioPage() {
       if (editing) { const { error } = await supabase.from("itens").update(payload).eq("id", editing.id); if (error) { setFormError(error.message); return; } }
       else { const { error } = await supabase.from("itens").insert(payload); if (error) { setFormError(error.message); return; } }
       setModalOpen(false); fetchData();
-    } catch (err: any) { setFormError(err.message || "Erro"); } finally { setSaving(false); }
+    } catch (err: unknown) { setFormError(err instanceof Error ? err.message : "Erro"); } finally { setSaving(false); }
   };
   const handleDelete = async (id: string) => {
     const { error } = await supabase.from("itens").delete().eq("id", id);

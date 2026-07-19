@@ -11,11 +11,8 @@ import {
   Plus,
   Loader2,
   RefreshCw,
-  Wallet,
-  PiggyBank,
   AlertTriangle,
   CheckCircle2,
-  PieChartIcon,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
@@ -56,6 +53,25 @@ const CATEGORIA_DESPESA_LABELS: Record<string, string> = {
   outros: "Outros",
 };
 
+// ============================================================
+// Tipos para movimentações financeiras recentes
+// ============================================================
+interface RecenteReceita {
+  id: string;
+  descricao?: string;
+  valor: number;
+  data_recebimento?: string;
+  categoria?: string;
+}
+
+interface RecenteDespesa {
+  id: string;
+  descricao?: string;
+  valor: number;
+  data_pagamento?: string;
+  categoria?: string;
+}
+
 const DONUT_COLORS = [
   "#10b981",
   "#3b82f6",
@@ -67,12 +83,19 @@ const DONUT_COLORS = [
   "#84cc16",
 ];
 
-const CustomTooltip = ({ active, payload, label }: any) => {
+interface TooltipPayloadEntry {
+  name: string;
+  value: number;
+  color: string;
+  payload: Record<string, unknown>;
+}
+
+const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: TooltipPayloadEntry[]; label?: string }) => {
   if (active && payload && payload.length) {
     return (
       <div className="rounded-lg border border-border bg-card px-3 py-2 text-xs shadow-sm">
         {label && <p className="font-medium text-foreground mb-1">{label}</p>}
-        {payload.map((entry: any, i: number) => (
+        {payload.map((entry, i: number) => (
           <p key={i} style={{ color: entry.color }} className="font-medium">
             {entry.name}: {formatCurrency(entry.value)}
           </p>
@@ -83,9 +106,9 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   return null;
 };
 
-const PieTooltip = ({ active, payload }: any) => {
-  if (active && payload && payload.length) {
-    const data = payload[0].payload;
+const PieTooltip = ({ active, payload }: { active?: boolean; payload?: TooltipPayloadEntry[] }) => {
+  if (active && payload && payload.length && payload[0]) {
+    const data = payload[0].payload as { name: string; value: number; pct: string };
     return (
       <div className="rounded-lg border border-border bg-card px-3 py-2 text-xs shadow-sm">
         <p className="font-medium text-foreground">{data.name}</p>
@@ -114,8 +137,8 @@ export function FinanceiroDashboardPage() {
     receitasPendentes: 0,
     despesasAPagar: 0,
   });
-  const [recentReceitas, setRecentReceitas] = useState<any[]>([]);
-  const [recentDespesas, setRecentDespesas] = useState<any[]>([]);
+  const [recentReceitas, setRecentReceitas] = useState<RecenteReceita[]>([]);
+  const [recentDespesas, setRecentDespesas] = useState<RecenteDespesa[]>([]);
   const [receitasByCategoria, setReceitasByCategoria] = useState<{ name: string; value: number; pct: string; color: string }[]>([]);
   const [despesasByCategoria, setDespesasByCategoria] = useState<{ name: string; value: number; pct: string; color: string }[]>([]);
   const [monthlyData, setMonthlyData] = useState<{ month: string; receitas: number; despesas: number; saldo: number }[]>([]);
@@ -166,36 +189,36 @@ export function FinanceiroDashboardPage() {
         supabase.from("despesas").select("categoria, valor").gte("data_pagamento", monthStart),
       ]);
 
-      const sum = (arr: any[] | null) => (arr || []).reduce((acc: number, r: any) => acc + (r.valor || 0), 0);
+      const sum = (arr: Array<{ valor?: number }> | null) => (arr || []).reduce((acc, r) => acc + (r.valor || 0), 0);
 
-      const receitasVal = sum(receitasMes.data);
-      const despesasVal = sum(despesasMes.data);
+      const receitasVal = sum(receitasMes.data as Array<{ valor?: number }> | null);
+      const despesasVal = sum(despesasMes.data as Array<{ valor?: number }> | null);
 
       setSummary({
         receitasMes: receitasVal,
         despesasMes: despesasVal,
         saldoMes: receitasVal - despesasVal,
-        receitasMesAnterior: sum(receitasMesAnt.data),
-        despesasMesAnterior: sum(despesasMesAnt.data),
-        totalReceitas: sum(totalReceitas.data),
-        totalDespesas: sum(totalDespesas.data),
+        receitasMesAnterior: sum(receitasMesAnt.data as Array<{ valor?: number }> | null),
+        despesasMesAnterior: sum(despesasMesAnt.data as Array<{ valor?: number }> | null),
+        totalReceitas: sum(totalReceitas.data as Array<{ valor?: number }> | null),
+        totalDespesas: sum(totalDespesas.data as Array<{ valor?: number }> | null),
         receitasCount: totalReceitas.data?.length || 0,
         despesasCount: totalDespesas.data?.length || 0,
-        receitasPendentes: totalReceitas.data?.filter((r: any) => new Date(r.data_recebimento) > now).length || 0,
-        despesasAPagar: totalDespesas.data?.filter((r: any) => new Date(r.data_pagamento) > now).length || 0,
+        receitasPendentes: (totalReceitas.data || []).filter((r: { data_recebimento: string }) => new Date(r.data_recebimento) > now).length || 0,
+        despesasAPagar: (totalDespesas.data || []).filter((r: { data_pagamento: string }) => new Date(r.data_pagamento) > now).length || 0,
       });
 
-      if (recentR.data) setRecentReceitas(recentR.data);
-      if (recentD.data) setRecentDespesas(recentD.data);
+      if (recentR.data) setRecentReceitas(recentR.data as RecenteReceita[]);
+      if (recentD.data) setRecentDespesas(recentD.data as RecenteDespesa[]);
 
       // Process category data for pie charts
       const catReceitas: Record<string, number> = {};
-      (receitasCateg.data || []).forEach((r: any) => {
+      ((receitasCateg.data || []) as Array<{ categoria?: string; valor?: number }>).forEach((r) => {
         const cat = r.categoria || "outros";
         catReceitas[cat] = (catReceitas[cat] || 0) + (r.valor || 0);
       });
       const catDespesas: Record<string, number> = {};
-      (despesasCateg.data || []).forEach((d: any) => {
+      ((despesasCateg.data || []) as Array<{ categoria?: string; valor?: number }>).forEach((d) => {
         const cat = d.categoria || "outros";
         catDespesas[cat] = (catDespesas[cat] || 0) + (d.valor || 0);
       });
@@ -213,7 +236,7 @@ export function FinanceiroDashboardPage() {
             name: getReceitaName(key),
             value: Math.round(value),
             pct: receitasTotal > 0 ? ((value / receitasTotal) * 100).toFixed(1) : "0",
-            color: DONUT_COLORS[i % DONUT_COLORS.length],
+            color: DONUT_COLORS[i % DONUT_COLORS.length]!,
           }))
       );
 
@@ -224,7 +247,7 @@ export function FinanceiroDashboardPage() {
             name: getDespesaName(key),
             value: Math.round(value),
             pct: despesasTotal > 0 ? ((value / despesasTotal) * 100).toFixed(1) : "0",
-            color: DONUT_COLORS[i % DONUT_COLORS.length],
+            color: DONUT_COLORS[i % DONUT_COLORS.length]!,
           }))
       );
 
@@ -260,9 +283,7 @@ export function FinanceiroDashboardPage() {
     }
   }, []);
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+  useEffect(() => { let c = false; queueMicrotask(() => { if (!c) fetchData(); }); return () => { c = true; }; }, [fetchData]);
 
   if (loading) {
     return (
@@ -600,7 +621,7 @@ export function FinanceiroDashboardPage() {
                     strokeWidth={2}
                     fillOpacity={1}
                     fill="url(#gradSaldo)"
-                    dot={(props: any) => {
+                    dot={(props: { cx: number; cy: number; payload: { saldo: number } }) => {
                       const { cx, cy, payload } = props;
                       const isPositive = payload.saldo >= 0;
                       return (

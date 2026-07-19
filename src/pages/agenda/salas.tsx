@@ -9,13 +9,12 @@ import {
   RefreshCw,
   Users,
   Wifi,
-  Monitor,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import type { Unidade } from "@/integrations/supabase/types";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -55,14 +54,14 @@ const tipoIcons: Record<string, string> = {
 };
 
 export function SalasPage() {
-  const [salas, setSalas] = useState<any[]>([]);
+  const [salas, setSalas] = useState<Array<Record<string, unknown>>>([]);
   const [unidades, setUnidades] = useState<Unidade[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("todas");
 
   const [modalOpen, setModalOpen] = useState(false);
-  const [editing, setEditing] = useState<any>(null);
+  const [editing, setEditing] = useState<Record<string, unknown> | null>(null);
   const [formData, setFormData] = useState({
     nome: "", codigo: "", capacidade: "30", tipo: "sala_aula", recursos: "",
     localizacao: "", status: "disponivel", observacoes: "", unidade_id: "",
@@ -79,14 +78,12 @@ export function SalasPage() {
         supabase.from("unidades").select("*").eq("ativo", true).order("nome"),
       ]);
       if (salasRes.data) {
-        setSalas((salasRes.data as any[]).map((s) => ({ ...s, unidade_nome: s.unidades?.nome || "Não definida" })));
+        setSalas((salasRes.data as Array<Record<string, unknown>>).map((s) => ({ ...s, unidade_nome: (s.unidades as Record<string, unknown> | null)?.nome || "Não definida" })));
       }
       if (unidRes.data) setUnidades(unidRes.data);
     } catch (err) { console.error("Erro ao carregar salas:", err); }
     finally { setLoading(false); }
-  }, []);
-
-  useEffect(() => { fetchData(); }, [fetchData]);
+  }, []);  useEffect(() => { let c = false; queueMicrotask(() => { if (!c) fetchData(); }); return () => { c = true; }; }, [fetchData]);
 
   const unidadeOptions = unidades.map((u) => ({ value: u.id, label: `${u.nome} (${u.sigla})` }));
 
@@ -96,7 +93,7 @@ export function SalasPage() {
     setFormError(""); setModalOpen(true);
   };
 
-  const openEditModal = (sala: any) => {
+  const openEditModal = (sala: Record<string, unknown>) => {
     setEditing(sala);
     setFormData({
       nome: sala.nome, codigo: sala.codigo || "", capacidade: sala.capacidade?.toString() || "30",
@@ -126,7 +123,7 @@ export function SalasPage() {
         if (error) { setFormError(error.message); return; }
       }
       setModalOpen(false); fetchData();
-    } catch (err: any) { setFormError(err.message || "Erro ao salvar"); }
+    } catch (err: unknown) { setFormError(err instanceof Error ? err.message : "Erro ao salvar"); }
     finally { setSaving(false); }
   };
 

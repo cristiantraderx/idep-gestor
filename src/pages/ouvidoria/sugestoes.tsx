@@ -8,8 +8,6 @@ import {
   Trash2,
   RefreshCw,
   CalendarDays,
-  Building2,
-  CheckCircle2,
   Lightbulb,
 } from "lucide-react";
 import { motion } from "framer-motion";
@@ -57,14 +55,14 @@ const statusVariant: Record<string, "default" | "secondary" | "outline" | "destr
 };
 
 export function SugestoesPage() {
-  const [sugestoes, setSugestoes] = useState<any[]>([]);
+  const [sugestoes, setSugestoes] = useState<Record<string, unknown>[]>([]);
   const [unidades, setUnidades] = useState<Unidade[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [categoriaFilter, setCategoriaFilter] = useState<string>("todas");
 
   const [modalOpen, setModalOpen] = useState(false);
-  const [editing, setEditing] = useState<any>(null);
+  const [editing, setEditing] = useState<Record<string, unknown> | null>(null);
   const [formData, setFormData] = useState({
     titulo: "",
     descricao: "",
@@ -87,7 +85,7 @@ export function SugestoesPage() {
         supabase.from("unidades").select("*").eq("ativo", true).order("nome"),
       ]);
       if (sugRes.data) {
-        setSugestoes((sugRes.data as any[]).map((s) => ({ ...s, unidade_nome: s.unidades?.nome || "Não definida" })));
+        setSugestoes((sugRes.data as Record<string, unknown>[]).map((s) => ({ ...s, unidade_nome: (s.unidades as Record<string, unknown> | undefined)?.nome as string || "Não definida" })));
       }
       if (unidRes.data) setUnidades(unidRes.data);
     } catch (err) {
@@ -95,9 +93,7 @@ export function SugestoesPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
-
-  useEffect(() => { fetchData(); }, [fetchData]);
+  }, []);  useEffect(() => { let c = false; queueMicrotask(() => { if (!c) fetchData(); }); return () => { c = true; }; }, [fetchData]);
 
   const unidadeOptions = unidades.map((u) => ({ value: u.id, label: `${u.nome} (${u.sigla})` }));
 
@@ -107,7 +103,7 @@ export function SugestoesPage() {
     setFormError(""); setModalOpen(true);
   };
 
-  const openEditModal = (s: any) => {
+  const openEditModal = (s: Record<string, unknown>) => {
     setEditing(s);
     setFormData({
       titulo: s.titulo, descricao: s.descricao || "", autor_nome: s.autor_nome || "", autor_email: s.autor_email || "",
@@ -136,7 +132,7 @@ export function SugestoesPage() {
         if (error) { setFormError(error.message); return; }
       }
       setModalOpen(false); fetchData();
-    } catch (err: any) { setFormError(err.message || "Erro ao salvar"); }
+    } catch (err: unknown) { setFormError(err instanceof Error ? err.message : "Erro ao salvar"); }
     finally { setSaving(false); }
   };
 

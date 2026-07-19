@@ -7,8 +7,6 @@ import {
   Edit3,
   Trash2,
   RefreshCw,
-  Building2,
-  Clock,
   MapPin,
   User,
 } from "lucide-react";
@@ -16,7 +14,7 @@ import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import type { Unidade } from "@/integrations/supabase/types";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -70,7 +68,7 @@ const COR_OPTIONS = [
 ];
 
 export function EventosPage() {
-  const [eventos, setEventos] = useState<any[]>([]);
+  const [eventos, setEventos] = useState<Array<Record<string, unknown>>>([]);
   const [unidades, setUnidades] = useState<Unidade[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -80,7 +78,7 @@ export function EventosPage() {
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
 
   const [modalOpen, setModalOpen] = useState(false);
-  const [editing, setEditing] = useState<any>(null);
+  const [editing, setEditing] = useState<Record<string, unknown> | null>(null);
   const [formData, setFormData] = useState({
     titulo: "", descricao: "", tipo: "reuniao", data_inicio: new Date().toISOString().split("T")[0],
     data_fim: "", hora_inicio: "", hora_fim: "", local: "", responsavel: "",
@@ -98,14 +96,12 @@ export function EventosPage() {
         supabase.from("unidades").select("*").eq("ativo", true).order("nome"),
       ]);
       if (evRes.data) {
-        setEventos((evRes.data as any[]).map((e) => ({ ...e, unidade_nome: e.unidades?.nome || "Não definida" })));
+        setEventos((evRes.data as Array<Record<string, unknown>>).map((e) => ({ ...e, unidade_nome: (e.unidades as Record<string, unknown> | null)?.nome || "Não definida" })));
       }
       if (unidRes.data) setUnidades(unidRes.data);
     } catch (err) { console.error("Erro ao carregar eventos:", err); }
     finally { setLoading(false); }
-  }, []);
-
-  useEffect(() => { fetchData(); }, [fetchData]);
+  }, []);  useEffect(() => { let c = false; queueMicrotask(() => { if (!c) fetchData(); }); return () => { c = true; }; }, [fetchData]);
 
   const unidadeOptions = unidades.map((u) => ({ value: u.id, label: `${u.nome} (${u.sigla})` }));
 
@@ -119,7 +115,7 @@ export function EventosPage() {
     setFormError(""); setModalOpen(true);
   };
 
-  const openEditModal = (ev: any) => {
+  const openEditModal = (ev: Record<string, unknown>) => {
     setEditing(ev);
     setFormData({
       titulo: ev.titulo, descricao: ev.descricao || "", tipo: ev.tipo || "reuniao",
@@ -154,7 +150,7 @@ export function EventosPage() {
         if (error) { setFormError(error.message); return; }
       }
       setModalOpen(false); fetchData();
-    } catch (err: any) { setFormError(err.message || "Erro ao salvar"); }
+    } catch (err: unknown) { setFormError(err instanceof Error ? err.message : "Erro ao salvar"); }
     finally { setSaving(false); }
   };
 
@@ -179,7 +175,7 @@ export function EventosPage() {
     const d = new Date(e.data_inicio);
     return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
   });
-  const eventsByDay: Record<number, any[]> = {};
+  const eventsByDay: Record<number, Record<string, unknown>[]> = {};
   monthEvents.forEach((e) => {
     const day = new Date(e.data_inicio).getDate();
     if (!eventsByDay[day]) eventsByDay[day] = [];
@@ -262,7 +258,7 @@ export function EventosPage() {
                   <div key={day} className={`min-h-[80px] border-r border-b border-border p-1.5 ${isToday ? "bg-pink-50/50 dark:bg-pink-950/20" : ""}`}>
                     <span className={`text-[10px] font-medium ${isToday ? "text-pink-600" : "text-muted-foreground"}`}>{day + 1}</span>
                     <div className="mt-1 space-y-0.5">
-                      {dayEvts.slice(0, 2).map((ev: any, i: number) => (
+                      {dayEvts.slice(0, 2).map((ev: Record<string, unknown>, i: number) => (
                         <div key={i} className="text-[7px] leading-tight px-1 py-0.5 rounded truncate text-white font-medium"
                           style={{ backgroundColor: ev.cor || "#3b82f6" }}>
                           {ev.titulo}

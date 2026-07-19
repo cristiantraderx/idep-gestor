@@ -100,9 +100,9 @@ export function ProtocolosPage() {
 
       if (protocolosRes.data) {
         setProtocolos(
-          (protocolosRes.data as any[]).map((p) => ({
+          (protocolosRes.data as Record<string, unknown>[]).map((p: Record<string, unknown>) => ({
             ...p,
-            unidade_nome: p.unidades?.nome || "Não definida",
+            unidade_nome: (p.unidades as Record<string, unknown> | undefined)?.nome as string || "Não definida",
           }))
         );
       }
@@ -114,9 +114,7 @@ export function ProtocolosPage() {
     }
   }, []);
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+  useEffect(() => { let c = false; queueMicrotask(() => { if (!c) fetchData(); }); return () => { c = true; }; }, [fetchData]);
 
   const unidadeOptions = unidades.map((u) => ({ value: u.id, label: `${u.nome} (${u.sigla})` }));
 
@@ -198,8 +196,8 @@ export function ProtocolosPage() {
 
       setModalOpen(false);
       fetchData();
-    } catch (err: any) {
-      setFormError(err.message || "Erro ao salvar protocolo");
+    } catch (err: unknown) {
+      setFormError(err instanceof Error ? err.message : "Erro ao salvar protocolo");
     } finally {
       setSaving(false);
     }

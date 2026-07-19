@@ -13,8 +13,6 @@ import {
   Users,
   MapPin,
   Clock,
-  Layers,
-  Building2,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
@@ -99,7 +97,7 @@ export function TurmasListPage() {
 
       if (turmasRes.data) {
         const turmasWithCounts = await Promise.all(
-          (turmasRes.data as any[]).map(async (t) => {
+          (turmasRes.data as Array<Record<string, unknown>>).map(async (t: Record<string, unknown>) => {
             const { count } = await supabase
               .from("matriculas")
               .select("*", { count: "exact", head: true })
@@ -107,8 +105,8 @@ export function TurmasListPage() {
               .eq("status", "ativo");
             return {
               ...t,
-              curso_nome: t.cursos?.nome || "Curso não encontrado",
-              unidade_nome: t.unidades?.nome || "Não definida",
+              curso_nome: (t.cursos as Record<string, unknown> | undefined)?.nome as string || "Curso não encontrado",
+              unidade_nome: (t.unidades as Record<string, unknown> | undefined)?.nome as string || "Não definida",
               alunos_count: count || 0,
             };
           })
@@ -125,7 +123,9 @@ export function TurmasListPage() {
   }, []);
 
   useEffect(() => {
-    fetchData();
+    let c = false;
+    queueMicrotask(() => { if (!c) fetchData(); });
+    return () => { c = true; };
   }, [fetchData]);
 
   const cursoOptions = cursos.map((c) => ({ value: c.id, label: `${c.nome}${c.codigo ? ` (${c.codigo})` : ""}` }));
@@ -212,8 +212,8 @@ export function TurmasListPage() {
 
       setModalOpen(false);
       fetchData();
-    } catch (err: any) {
-      setFormError(err.message || "Erro ao salvar turma");
+    } catch (err: unknown) {
+      setFormError(err instanceof Error ? err.message : "Erro ao salvar turma");
     } finally {
       setSaving(false);
     }

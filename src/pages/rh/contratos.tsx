@@ -9,7 +9,6 @@ import {
   RefreshCw,
   CalendarDays,
   DollarSign,
-  User,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
@@ -70,13 +69,11 @@ export function ContratosPage() {
         supabase.from("contratos").select("*, unidades(nome, sigla)").order("created_at", { ascending: false }),
         supabase.from("unidades").select("*").eq("ativo", true).order("nome"),
       ]);
-      if (contRes.data) setContratos((contRes.data as any[]).map((c) => ({ ...c, unidade_nome: c.unidades?.nome || "Não definida" })));
+      if (contRes.data) setContratos((contRes.data as Record<string, unknown>[]).map((c: Record<string, unknown>) => ({ ...c, unidade_nome: (c.unidades as Record<string, unknown> | undefined)?.nome as string || "Não definida" })));
       if (unidRes.data) setUnidades(unidRes.data);
     } catch (err) { console.error(err);
     } finally { setLoading(false); }
-  }, []);
-
-  useEffect(() => { fetchData(); }, [fetchData]);
+  }, []);  useEffect(() => { let c = false; queueMicrotask(() => { if (!c) fetchData(); }); return () => { c = true; }; }, [fetchData]);
 
   const unidadeOptions = unidades.map((u) => ({ value: u.id, label: `${u.nome} (${u.sigla})` }));
 
@@ -109,7 +106,7 @@ export function ContratosPage() {
       if (editing) { const { error } = await supabase.from("contratos").update(payload).eq("id", editing.id); if (error) { setFormError(error.message); return; } }
       else { const { error } = await supabase.from("contratos").insert(payload); if (error) { setFormError(error.message); return; } }
       setModalOpen(false); fetchData();
-    } catch (err: any) { setFormError(err.message || "Erro");
+    } catch (err: unknown) { setFormError(err instanceof Error ? err.message : "Erro");
     } finally { setSaving(false); }
   };
 

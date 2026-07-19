@@ -2,12 +2,15 @@ import { Outlet } from "react-router-dom";
 import { useTheme } from "@/contexts/theme-context";
 import { Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { AssistantBot } from "@/components/assistant/assistant-bot";
 
 export function AuthLayout() {
   const { theme, toggleTheme } = useTheme();
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-idep-50 via-white to-rondonia-50 dark:from-idep-950 dark:via-card dark:to-rondonia-950 p-4">
+    <>
+      <AssistantBot />
+      <div className="relative flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-idep-50 via-white to-rondonia-50 dark:from-idep-950 dark:via-card dark:to-rondonia-950 p-4">
       {/* Theme toggle */}
       <Button
         variant="ghost"
@@ -48,5 +51,6 @@ export function AuthLayout() {
         IDEP-Gestor © {new Date().getFullYear()} · Desenvolvido por Cristian Marques
       </p>
     </div>
+    </>
   );
 }

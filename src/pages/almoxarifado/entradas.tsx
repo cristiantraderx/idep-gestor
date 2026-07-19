@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { PackagePlus, Plus, Search, Loader2, Edit3, Trash2, RefreshCw, Package, CalendarDays, FileText } from "lucide-react";
+import { PackagePlus, Plus, Search, Loader2, Trash2, RefreshCw, Package, CalendarDays, FileText } from "lucide-react";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import type { MovimentoEstoque, Item, Unidade } from "@/integrations/supabase/types";
@@ -10,7 +10,7 @@ import { Dialog, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { cn, formatFullDate } from "@/lib/utils";
+import { formatFullDate } from "@/lib/utils";
 
 export function MovEntradasPage() {
   const [movimentos, setMovimentos] = useState<(MovimentoEstoque & { item_nome?: string; unidade_nome?: string })[]>([]);
@@ -34,19 +34,16 @@ export function MovEntradasPage() {
         supabase.from("itens").select("*").order("nome"),
         supabase.from("unidades").select("*").eq("ativo", true).order("nome"),
       ]);
-      if (movRes.data) setMovimentos((movRes.data as any[]).map((m) => ({ ...m, item_nome: m.itens?.nome || "Item não encontrado", unidade_nome: m.unidades?.nome || "Não definida" })));
+      if (movRes.data) setMovimentos((movRes.data as Record<string, unknown>[]).map((m: Record<string, unknown>) => ({ ...m, item_nome: (m.itens as Record<string, unknown> | undefined)?.nome as string || "Item não encontrado", unidade_nome: (m.unidades as Record<string, unknown> | undefined)?.nome as string || "Não definida" })));
       if (itensRes.data) setItens(itensRes.data);
       if (unidRes.data) setUnidades(unidRes.data);
     } catch (err) { console.error(err); } finally { setLoading(false); }
-  }, []);
-  useEffect(() => { fetchData(); }, [fetchData]);
+  }, []);  useEffect(() => { let c = false; queueMicrotask(() => { if (!c) fetchData(); }); return () => { c = true; }; }, [fetchData]);
 
   const itemOptions = itens.map((i) => ({ value: i.id, label: `${i.nome}${i.codigo ? ` (${i.codigo})` : ""} - Estoque: ${i.quantidade_atual}` }));
   const unidadeOptions = unidades.map((u) => ({ value: u.id, label: `${u.nome} (${u.sigla})` }));
 
   const openCreate = () => { setEditing(null); setForm({ item_id: "", quantidade: "1", documento: "", origem_destino: "", data_movimento: new Date().toISOString().split("T")[0], observacoes: "", unidade_id: "" }); setFormError(""); setModalOpen(true); };
-  const openEdit = (m: MovimentoEstoque) => { setEditing(m); setForm({ item_id: m.item_id, quantidade: m.quantidade.toString(), documento: m.documento || "", origem_destino: m.origem_destino || "", data_movimento: m.data_movimento.split("T")[0], observacoes: m.observacoes || "", unidade_id: m.unidade_id }); setFormError(""); setModalOpen(true); };
-
   const handleSave = async () => {
     setFormError(""); if (!form.item_id || !form.unidade_id) { setFormError("Item e unidade são obrigatórios."); return; }
     setSaving(true);
@@ -63,7 +60,7 @@ export function MovEntradasPage() {
         if (itemAtual) { await supabase.from("itens").update({ quantidade_atual: itemAtual.quantidade_atual + (parseInt(form.quantidade) || 0) }).eq("id", form.item_id); }
       }
       setModalOpen(false); fetchData();
-    } catch (err: any) { setFormError(err.message || "Erro"); } finally { setSaving(false); }
+    } catch (err: unknown) { setFormError(err instanceof Error ? err.message : "Erro"); } finally { setSaving(false); }
   };
   const handleDelete = async (id: string) => {
     const { error } = await supabase.from("movimentos_estoque").delete().eq("id", id);

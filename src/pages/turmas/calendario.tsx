@@ -48,10 +48,10 @@ export function CalendarioPage() {
 
       if (data) {
         setTurmas(
-          (data as any[]).map((t) => ({
+          (data as Record<string, unknown>[]).map((t: Record<string, unknown>) => ({
             ...t,
-            curso_nome: t.cursos?.nome || "Curso não encontrado",
-          }))
+            curso_nome: (t.cursos as Record<string, unknown> | undefined)?.nome as string || "Curso não encontrado",
+          } as Turma & { curso_nome?: string }))
         );
       }
     } catch (err) {
@@ -62,7 +62,9 @@ export function CalendarioPage() {
   }, []);
 
   useEffect(() => {
-    fetchData();
+    let c = false;
+    queueMicrotask(() => { if (!c) fetchData(); });
+    return () => { c = true; };
   }, [fetchData]);
 
   const filteredTurmas = turmas.filter((t) => {
@@ -231,7 +233,7 @@ export function CalendarioPage() {
                     <div className="flex items-center gap-2 shrink-0">
                       <div className="flex flex-col items-center rounded-lg border border-border bg-muted/50 px-3 py-1.5 min-w-[56px]">
                         <span className="text-[10px] font-medium text-muted-foreground uppercase leading-tight">
-                          {startDate ? MONTHS[startDate.getMonth()].slice(0, 3) : "---"}
+                          {startDate ? MONTHS[startDate.getMonth()]?.slice(0, 3) : "---"}
                         </span>
                         <span className="text-lg font-bold text-foreground leading-tight">
                           {startDate ? startDate.getDate() : "--"}

@@ -22,6 +22,19 @@ import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { formatCurrency, formatFullDate } from "@/lib/utils";
 
+interface DespesaRow {
+  id: string;
+  descricao: string;
+  valor: number;
+  data_pagamento: string;
+  categoria: string;
+  empenho_id?: string;
+  documento?: string;
+  unidade_id: string;
+  unidade_nome: string;
+  unidades?: { nome: string; sigla: string };
+}
+
 const CATEGORIA_OPTIONS = [
   { value: "pessoal", label: "Pessoal" },
   { value: "material", label: "Material" },
@@ -41,14 +54,14 @@ const categoriaColors: Record<string, string> = {
 };
 
 export function DespesasPage() {
-  const [despesas, setDespesas] = useState<any[]>([]);
+  const [despesas, setDespesas] = useState<DespesaRow[]>([]);
   const [unidades, setUnidades] = useState<Unidade[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [categoriaFilter, setCategoriaFilter] = useState<string>("todas");
 
   const [modalOpen, setModalOpen] = useState(false);
-  const [editingDespesa, setEditingDespesa] = useState<any>(null);
+  const [editingDespesa, setEditingDespesa] = useState<DespesaRow | null>(null);
   const [formData, setFormData] = useState({
     descricao: "",
     valor: "",
@@ -73,7 +86,7 @@ export function DespesasPage() {
 
       if (despesasRes.data) {
         setDespesas(
-          (despesasRes.data as any[]).map((d) => ({
+          (despesasRes.data as DespesaRow[]).map((d: DespesaRow) => ({
             ...d,
             unidade_nome: d.unidades?.nome || "Não definida",
           }))
@@ -87,7 +100,7 @@ export function DespesasPage() {
     }
   }, []);
 
-  useEffect(() => { fetchData(); }, [fetchData]);
+  useEffect(() => { let c = false; queueMicrotask(() => { if (!c) fetchData(); }); return () => { c = true; }; }, [fetchData]);
 
   const unidadeOptions = unidades.map((u) => ({ value: u.id, label: `${u.nome} (${u.sigla})` }));
 
@@ -106,7 +119,7 @@ export function DespesasPage() {
     setModalOpen(true);
   };
 
-  const openEditModal = (desp: any) => {
+  const openEditModal = (desp: DespesaRow) => {
     setEditingDespesa(desp);
     setFormData({
       descricao: desp.descricao,
@@ -148,8 +161,8 @@ export function DespesasPage() {
       }
       setModalOpen(false);
       fetchData();
-    } catch (err: any) {
-      setFormError(err.message || "Erro ao salvar despesa");
+    } catch (err: unknown) {
+      setFormError(err instanceof Error ? err.message : "Erro ao salvar despesa");
     } finally { setSaving(false); }
   };
 

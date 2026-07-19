@@ -35,7 +35,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
   // Fetch internal user ID from usuarios table
   useEffect(() => {
     if (!user) {
-      setInternalUserId(null);
+      queueMicrotask(() => setInternalUserId(null));
       return;
     }
 
@@ -54,12 +54,14 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
   // Fetch initial notifications
   useEffect(() => {
     if (!internalUserId) {
-      setNotifications([]);
-      setLoading(false);
+      queueMicrotask(() => {
+        setNotifications([]);
+        setLoading(false);
+      });
       return;
     }
 
-    setLoading(true);
+    queueMicrotask(() => setLoading(true));
     supabase
       .from("notificacoes")
       .select("*")

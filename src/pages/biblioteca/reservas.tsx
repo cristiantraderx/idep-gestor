@@ -4,14 +4,11 @@ import {
   Plus,
   Search,
   Loader2,
-  Edit3,
   Trash2,
   RefreshCw,
   User,
   Library,
   CalendarDays,
-  CheckCircle2,
-  XCircle,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
@@ -51,7 +48,7 @@ export function ReservasPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<Reserva | null>(null);
   const [formData, setFormData] = useState({
-    obra_id: "", aluno_id: "", data_reserva: new Date().toISOString().split("T")[0],
+    obra_id: "", aluno_id: "", data_reserva: new Date().toISOString()!.split("T")[0]!,
     data_validade: "", status: "ativa" as Reserva["status"], observacoes: "", unidade_id: "",
   });
   const [saving, setSaving] = useState(false);
@@ -67,7 +64,7 @@ export function ReservasPage() {
         supabase.from("obras").select("*").order("titulo"),
         supabase.from("unidades").select("*").eq("ativo", true).order("nome"),
       ]);
-      if (resRes.data) setReservas((resRes.data as any[]).map((r) => ({ ...r, obra_titulo: r.obras?.titulo || "Obra não encontrada", aluno_nome: r.alunos?.nome || "Aluno não encontrado", unidade_nome: r.unidades?.nome || "Não definida" })));
+      if (resRes.data) setReservas((resRes.data as Record<string, unknown>[]).map((r: Record<string, unknown>) => ({ ...r, obra_titulo: (r.obras as Record<string, unknown> | undefined)?.titulo as string || "Obra não encontrada", aluno_nome: (r.alunos as Record<string, unknown> | undefined)?.nome as string || "Aluno não encontrado", unidade_nome: (r.unidades as Record<string, unknown> | undefined)?.nome as string || "Não definida" })));
       if (alunosRes.data) setAlunos(alunosRes.data);
       if (obrasRes.data) setObras(obrasRes.data);
       if (unidRes.data) setUnidades(unidRes.data);
@@ -75,7 +72,7 @@ export function ReservasPage() {
     } finally { setLoading(false); }
   }, []);
 
-  useEffect(() => { fetchData(); }, [fetchData]);
+  useEffect(() => { let c = false; queueMicrotask(() => { if (!c) fetchData(); }); return () => { c = true; }; }, [fetchData]);
 
   const alunoOptions = alunos.map((a) => ({ value: a.id, label: a.nome }));
   const obraOptions = obras.map((o) => ({ value: o.id, label: `${o.titulo}${o.autor ? ` - ${o.autor}` : ""}` }));
@@ -84,7 +81,7 @@ export function ReservasPage() {
   const openCreate = () => {
     setEditing(null);
     const validade = new Date(); validade.setDate(validade.getDate() + 7);
-    setFormData({ obra_id: "", aluno_id: "", data_reserva: new Date().toISOString().split("T")[0], data_validade: validade.toISOString().split("T")[0], status: "ativa", observacoes: "", unidade_id: "" });
+    setFormData({ obra_id: "", aluno_id: "", data_reserva: new Date().toISOString()!.split("T")[0]!, data_validade: validade.toISOString()!.split("T")[0]!, status: "ativa", observacoes: "", unidade_id: "" });
     setFormError(""); setModalOpen(true);
   };
 
@@ -99,7 +96,7 @@ export function ReservasPage() {
       if (editing) { const { error } = await supabase.from("reservas").update(payload).eq("id", editing.id); if (error) { setFormError(error.message); return; } }
       else { const { error } = await supabase.from("reservas").insert(payload); if (error) { setFormError(error.message); return; } }
       setModalOpen(false); fetchData();
-    } catch (err: any) { setFormError(err.message || "Erro");
+    } catch (err: unknown) { setFormError(err instanceof Error ? err.message : "Erro");
     } finally { setSaving(false); }
   };
 

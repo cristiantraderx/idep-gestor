@@ -73,7 +73,7 @@ const prioridadeIcon: Record<string, string> = {
 };
 
 export function ReclamacoesPage() {
-  const [reclamacoes, setReclamacoes] = useState<any[]>([]);
+  const [reclamacoes, setReclamacoes] = useState<Record<string, unknown>[]>([]);
   const [unidades, setUnidades] = useState<Unidade[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -81,7 +81,7 @@ export function ReclamacoesPage() {
   const [stats, setStats] = useState({ recebidas: 0, em_andamento: 0, concluidas: 0, alta_prioridade: 0 });
 
   const [modalOpen, setModalOpen] = useState(false);
-  const [editing, setEditing] = useState<any>(null);
+  const [editing, setEditing] = useState<Record<string, unknown> | null>(null);
   const [formData, setFormData] = useState({
     tipo: "reclamacao",
     assunto: "",
@@ -109,16 +109,16 @@ export function ReclamacoesPage() {
       ]);
 
       if (recRes.data) {
-        const data = (recRes.data as any[]).map((r) => ({
+        const typedData = (recRes.data as Record<string, unknown>[]).map((r: Record<string, unknown>) => ({
           ...r,
-          unidade_nome: r.unidades?.nome || "Não definida",
+          unidade_nome: (r.unidades as Record<string, unknown> | undefined)?.nome as string || "Não definida",
         }));
-        setReclamacoes(data);
+        setReclamacoes(typedData);
         setStats({
-          recebidas: data.filter((r: any) => r.status === "recebida").length,
-          em_andamento: data.filter((r: any) => r.status === "em_andamento" || r.status === "em_analise").length,
-          concluidas: data.filter((r: any) => r.status === "concluida").length,
-          alta_prioridade: data.filter((r: any) => r.prioridade === "alta" && r.status !== "concluida" && r.status !== "cancelada").length,
+          recebidas: typedData.filter((r: Record<string, unknown>) => (r.status as string) === "recebida").length,
+          em_andamento: typedData.filter((r: Record<string, unknown>) => (r.status as string) === "em_andamento" || (r.status as string) === "em_analise").length,
+          concluidas: typedData.filter((r: Record<string, unknown>) => (r.status as string) === "concluida").length,
+          alta_prioridade: typedData.filter((r: Record<string, unknown>) => (r.prioridade as string) === "alta" && (r.status as string) !== "concluida" && (r.status as string) !== "cancelada").length,
         });
       }
       if (unidRes.data) setUnidades(unidRes.data);
@@ -127,9 +127,7 @@ export function ReclamacoesPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
-
-  useEffect(() => { fetchData(); }, [fetchData]);
+  }, []);  useEffect(() => { let c = false; queueMicrotask(() => { if (!c) fetchData(); }); return () => { c = true; }; }, [fetchData]);
 
   const unidadeOptions = unidades.map((u) => ({ value: u.id, label: `${u.nome} (${u.sigla})` }));
 
@@ -153,7 +151,7 @@ export function ReclamacoesPage() {
     setModalOpen(true);
   };
 
-  const openEditModal = (rec: any) => {
+  const openEditModal = (rec: Record<string, unknown>) => {
     setEditing(rec);
     setFormData({
       tipo: rec.tipo || "reclamacao",
@@ -207,8 +205,8 @@ export function ReclamacoesPage() {
       }
       setModalOpen(false);
       fetchData();
-    } catch (err: any) {
-      setFormError(err.message || "Erro ao salvar");
+    } catch (err: unknown) {
+      setFormError(err instanceof Error ? err.message : "Erro ao salvar");
     } finally { setSaving(false); }
   };
 

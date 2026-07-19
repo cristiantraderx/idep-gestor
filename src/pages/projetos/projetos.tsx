@@ -4,11 +4,9 @@ import {
   Plus,
   Search,
   Loader2,
-  Edit3,
   Trash2,
   RefreshCw,
   CalendarDays,
-  Building2,
   Users,
   DollarSign,
   Flag,
@@ -48,14 +46,14 @@ const statusVariant: Record<string, "default" | "secondary" | "outline" | "destr
 };
 
 export function ProjetosPage() {
-  const [projetos, setProjetos] = useState<any[]>([]);
+  const [projetos, setProjetos] = useState<Record<string, unknown>[]>([]);
   const [unidades, setUnidades] = useState<Unidade[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("todas");
 
   const [modalOpen, setModalOpen] = useState(false);
-  const [editing, setEditing] = useState<any>(null);
+  const [editing, setEditing] = useState<Record<string, unknown> | null>(null);
   const [formData, setFormData] = useState({
     nome: "", codigo: "", descricao: "", objetivo: "", escopo: "", orcamento: "",
     data_inicio: "", data_fim: "", coordenador: "", equipe: "", prioridade: "media",
@@ -72,13 +70,11 @@ export function ProjetosPage() {
         supabase.from("projetos").select("*, unidades(nome, sigla)").order("created_at", { ascending: false }),
         supabase.from("unidades").select("*").eq("ativo", true).order("nome"),
       ]);
-      if (projRes.data) setProjetos((projRes.data as any[]).map((p) => ({ ...p, unidade_nome: p.unidades?.nome || "Não definida" })));
+      if (projRes.data) setProjetos((projRes.data as Record<string, unknown>[]).map((p: Record<string, unknown>) => ({ ...p, unidade_nome: (p.unidades as Record<string, unknown> | undefined)?.nome as string || "Não definida" })));
       if (unidRes.data) setUnidades(unidRes.data);
     } catch (err) { console.error("Erro ao carregar projetos:", err); }
     finally { setLoading(false); }
-  }, []);
-
-  useEffect(() => { fetchData(); }, [fetchData]);
+  }, []);  useEffect(() => { let c = false; queueMicrotask(() => { if (!c) fetchData(); }); return () => { c = true; }; }, [fetchData]);
 
   const unidadeOptions = unidades.map((u) => ({ value: u.id, label: `${u.nome} (${u.sigla})` }));
 
@@ -88,7 +84,7 @@ export function ProjetosPage() {
     setFormError(""); setModalOpen(true);
   };
 
-  const openEditModal = (p: any) => {
+  const openEditModal = (p: Record<string, unknown>) => {
     setEditing(p);
     setFormData({
       nome: p.nome, codigo: p.codigo || "", descricao: p.descricao || "", objetivo: p.objetivo || "", escopo: p.escopo || "",
@@ -121,7 +117,7 @@ export function ProjetosPage() {
         if (error) { setFormError(error.message); return; }
       }
       setModalOpen(false); fetchData();
-    } catch (err: any) { setFormError(err.message || "Erro ao salvar"); }
+    } catch (err: unknown) { setFormError(err instanceof Error ? err.message : "Erro ao salvar"); }
     finally { setSaving(false); }
   };
 

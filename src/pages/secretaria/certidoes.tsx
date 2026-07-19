@@ -4,7 +4,6 @@ import {
   Plus,
   Search,
   Loader2,
-  Edit3,
   Trash2,
   RefreshCw,
   User,
@@ -89,10 +88,10 @@ export function CertidoesPage() {
 
       if (certidoesRes.data) {
         setCertidoes(
-          (certidoesRes.data as any[]).map((c) => ({
+          (certidoesRes.data as Record<string, unknown>[]).map((c: Record<string, unknown>) => ({
             ...c,
-            aluno_nome: c.alunos?.nome || "Aluno não encontrado",
-            unidade_nome: c.unidades?.nome || "Não definida",
+            aluno_nome: (c.alunos as Record<string, unknown> | undefined)?.nome as string || "Aluno não encontrado",
+            unidade_nome: (c.unidades as Record<string, unknown> | undefined)?.nome as string || "Não definida",
           }))
         );
       }
@@ -105,9 +104,7 @@ export function CertidoesPage() {
     }
   }, []);
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+  useEffect(() => { let c = false; queueMicrotask(() => { if (!c) fetchData(); }); return () => { c = true; }; }, [fetchData]);
 
   const alunoOptions = alunos.map((a) => ({ value: a.id, label: a.nome }));
   const unidadeOptions = unidades.map((u) => ({ value: u.id, label: `${u.nome} (${u.sigla})` }));
@@ -170,8 +167,8 @@ export function CertidoesPage() {
 
       setModalOpen(false);
       fetchData();
-    } catch (err: any) {
-      setFormError(err.message || "Erro ao salvar certidão");
+    } catch (err: unknown) {
+      setFormError(err instanceof Error ? err.message : "Erro ao salvar certidão");
     } finally {
       setSaving(false);
     }

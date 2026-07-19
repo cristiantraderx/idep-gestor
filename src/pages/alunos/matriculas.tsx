@@ -84,11 +84,11 @@ export function MatriculasPage() {
 
       if (matriculasRes.data) {
         setMatriculas(
-          (matriculasRes.data as any[]).map((m) => ({
+          (matriculasRes.data as Record<string, unknown>[]).map((m: Record<string, unknown>) => ({
             ...m,
-            aluno_nome: m.alunos?.nome || "Aluno não encontrado",
-            curso_nome: m.cursos?.nome || "Curso não encontrado",
-            turma_nome: m.turmas ? `${m.turmas.nome}${m.turmas.codigo ? ` (${m.turmas.codigo})` : ""}` : "Turma não encontrada",
+            aluno_nome: (m.alunos as Record<string, unknown> | undefined)?.nome as string || "Aluno não encontrado",
+            curso_nome: (m.cursos as Record<string, unknown> | undefined)?.nome as string || "Curso não encontrado",
+            turma_nome: m.turmas ? `${(m.turmas as Record<string, unknown>).nome as string}${(m.turmas as Record<string, unknown>).codigo ? ` (${(m.turmas as Record<string, unknown>).codigo as string})` : ""}` : "Turma não encontrada",
           }))
         );
       }
@@ -102,9 +102,7 @@ export function MatriculasPage() {
     }
   }, []);
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+  useEffect(() => { let c = false; queueMicrotask(() => { if (!c) fetchData(); }); return () => { c = true; }; }, [fetchData]);
 
   const alunoOptions = alunos.map((a) => ({ value: a.id, label: a.nome }));
   const cursoOptions = cursos.map((c) => ({ value: c.id, label: c.nome }));
@@ -176,8 +174,8 @@ export function MatriculasPage() {
 
       setModalOpen(false);
       fetchData();
-    } catch (err: any) {
-      setFormError(err.message || "Erro ao salvar matrícula");
+    } catch (err: unknown) {
+      setFormError(err instanceof Error ? err.message : "Erro ao salvar matrícula");
     } finally {
       setSaving(false);
     }

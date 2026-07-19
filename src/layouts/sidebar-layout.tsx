@@ -3,6 +3,7 @@ import { Sidebar } from "./sidebar";
 import { Header } from "./header";
 import { AssistantBot } from "@/components/assistant/assistant-bot";
 import { useSidebar } from "@/hooks/use-sidebar";
+import { useNavigationTracker } from "@/hooks/use-navigation-tracker";
 import { cn } from "@/lib/utils";
 import { useEffect, useRef } from "react";
 
@@ -10,6 +11,9 @@ export function SidebarLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const prevPathRef = useRef(location.pathname);
+
+  // Rastreia visitas para o painel de módulos mais visitados
+  useNavigationTracker();
 
   const {
     isCollapsed,

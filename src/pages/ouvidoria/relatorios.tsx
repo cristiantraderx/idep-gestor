@@ -8,14 +8,25 @@ import {
   MessageSquare,
   TrendingUp,
   TrendingDown,
-  Download,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
+
+interface ManifestacaoRow {
+  id: string;
+  tipo?: string;
+  categoria?: string;
+  status?: string;
+  data_abertura?: string;
+  data_conclusao?: string;
+  created_at?: string;
+  descricao?: string;
+  titulo?: string;
+  assunto?: string;
+}
 
 export function RelatoriosOuvidoriaPage() {
   const [loading, setLoading] = useState(true);
@@ -30,7 +41,7 @@ export function RelatoriosOuvidoriaPage() {
     reclamacoesPorTipo: [] as { tipo: string; count: number; label: string }[],
     sugestoesPorCategoria: [] as { categoria: string; count: number; label: string }[],
     statusReclamacoes: [] as { status: string; count: number; label: string }[],
-    ultimasManifestacoes: [] as any[],
+    ultimasManifestacoes: [] as Array<{ id: string; tipo: string; descricao: string; created_at: string; status: string }>,
   });
 
   const fetchData = useCallback(async () => {
@@ -53,28 +64,28 @@ export function RelatoriosOuvidoriaPage() {
 
       // Tipos
       const tipoCount: Record<string, number> = {};
-      reclamacoes.forEach((r: any) => { const t = r.tipo || "outros"; tipoCount[t] = (tipoCount[t] || 0) + 1; });
+      reclamacoes.forEach((r: ManifestacaoRow) => { const t = r.tipo || "outros"; tipoCount[t] = (tipoCount[t] || 0) + 1; });
       const tipoLabels: Record<string, string> = { reclamacao: "Reclamação", denuncia: "Denúncia", elogio: "Elogio", solicitacao: "Solicitação", outros: "Outros" };
 
       // Categorias
       const catCount: Record<string, number> = {};
-      sugestoes.forEach((s: any) => { const c = s.categoria || "outros"; catCount[c] = (catCount[c] || 0) + 1; });
+      sugestoes.forEach((s: ManifestacaoRow) => { const c = s.categoria || "outros"; catCount[c] = (catCount[c] || 0) + 1; });
       const catLabels: Record<string, string> = { academica: "Acadêmica", administrativa: "Administrativa", infraestrutura: "Infraestrutura", tecnologia: "Tecnologia", outros: "Outros" };
 
       // Status
       const statusCount: Record<string, number> = {};
-      reclamacoesAll.forEach((r: any) => { const s = r.status || "recebida"; statusCount[s] = (statusCount[s] || 0) + 1; });
+      reclamacoesAll.forEach((r: ManifestacaoRow) => { const s = r.status || "recebida"; statusCount[s] = (statusCount[s] || 0) + 1; });
       const statusLabels: Record<string, string> = { recebida: "Recebida", em_analise: "Em Análise", em_andamento: "Em Andamento", concluida: "Concluída", cancelada: "Cancelada" };
 
-      const concluidas = reclamacoesAll.filter((r: any) => r.status === "concluida").length;
+      const concluidas = reclamacoesAll.filter((r: ManifestacaoRow) => r.status === "concluida").length;
       const total = reclamacoesAll.length;
       const taxaResolucao = total > 0 ? ((concluidas / total) * 100).toFixed(1) : "0";
 
       // Tempo médio (simulado - calculado pela diferença entre abertura e conclusão)
-      const concluidasComData = reclamacoesAll.filter((r: any) => r.status === "concluida" && r.data_conclusao);
-      const tempoTotal = concluidasComData.reduce((acc: number, r: any) => {
-        const abertura = new Date(r.data_abertura).getTime();
-        const conclusao = new Date(r.data_conclusao).getTime();
+      const concluidasComData = reclamacoesAll.filter((r: ManifestacaoRow) => r.status === "concluida" && r.data_conclusao);
+      const tempoTotal = concluidasComData.reduce((acc: number, r: ManifestacaoRow) => {
+        const abertura = new Date(r.data_abertura!).getTime();
+        const conclusao = new Date(r.data_conclusao!).getTime();
         return acc + (conclusao - abertura);
       }, 0);
       const tempoMedioDias = concluidasComData.length > 0
@@ -98,7 +109,7 @@ export function RelatoriosOuvidoriaPage() {
           .sort(([, a], [, b]) => b - a)
           .map(([status, count]) => ({ status, count, label: statusLabels[status] || status })),
         ultimasManifestacoes: [...reclamacoes.slice(0, 3), ...sugestoes.slice(0, 2)].sort(
-          (a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+          (a: ManifestacaoRow, b: ManifestacaoRow) => new Date(b.created_at!).getTime() - new Date(a.created_at!).getTime()
         ).slice(0, 5),
       });
     } catch (err) {
@@ -106,9 +117,7 @@ export function RelatoriosOuvidoriaPage() {
     } finally {
       setLoading(false);
     }
-  }, [periodo]);
-
-  useEffect(() => { fetchData(); }, [fetchData]);
+  }, [periodo]);  useEffect(() => { let c = false; queueMicrotask(() => { if (!c) fetchData(); }); return () => { c = true; }; }, [fetchData]);
 
   if (loading) {
     return <div className="flex items-center justify-center h-64"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>;
@@ -285,7 +294,7 @@ export function RelatoriosOuvidoriaPage() {
             <p className="text-xs text-muted-foreground text-center py-8">Nenhuma manifestação registrada</p>
           ) : (
             <div className="divide-y divide-border">
-              {stats.ultimasManifestacoes.map((m: any, i: number) => (
+              {stats.ultimasManifestacoes.map((m, i: number) => (
                 <div key={i} className="flex items-center gap-3 px-6 py-3">
                   <div className={`rounded-lg p-1.5 ${m.tipo ? "bg-purple-50 dark:bg-purple-950/50" : "bg-violet-50 dark:bg-violet-950/50"}`}>
                     {m.tipo ? <Mic className="h-3.5 w-3.5 text-purple-600" /> : <MessageSquare className="h-3.5 w-3.5 text-violet-600" />}

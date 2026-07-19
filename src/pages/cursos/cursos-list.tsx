@@ -88,7 +88,7 @@ export function CursosListPage() {
 
   // Detail modal
   const [detailCurso, setDetailCurso] = useState<(Curso & { unidade_nome?: string }) | null>(null);
-  const [disciplinasCurso, setDisciplinasCurso] = useState<any[]>([]);
+  const [disciplinasCurso, setDisciplinasCurso] = useState<Record<string, unknown>[]>([]);
 
   // Delete confirmation
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
@@ -107,14 +107,14 @@ export function CursosListPage() {
       if (cursosRes.data) {
         // Get discipline count for each course
         const coursesWithCounts = await Promise.all(
-          (cursosRes.data as any[]).map(async (c) => {
+          (cursosRes.data as Record<string, unknown>[]).map(async (c: Record<string, unknown>) => {
             const { count } = await supabase
               .from("disciplinas")
               .select("*", { count: "exact", head: true })
-              .eq("curso_id", c.id);
+              .eq("curso_id", c.id as string);
             return {
               ...c,
-              unidade_nome: c.unidades?.nome || "Não definida",
+              unidade_nome: (c.unidades as Record<string, unknown> | undefined)?.nome as string || "Não definida",
               disciplinas_count: count || 0,
             };
           })
@@ -129,9 +129,7 @@ export function CursosListPage() {
     }
   }, []);
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+  useEffect(() => { let c = false; queueMicrotask(() => { if (!c) fetchData(); }); return () => { c = true; }; }, [fetchData]);
 
   const unidadeOptions = unidades.map((u) => ({ value: u.id, label: `${u.nome} (${u.sigla})` }));
 
@@ -221,8 +219,8 @@ export function CursosListPage() {
 
       setModalOpen(false);
       fetchData();
-    } catch (err: any) {
-      setFormError(err.message || "Erro ao salvar curso");
+    } catch (err: unknown) {
+      setFormError(err instanceof Error ? err.message : "Erro ao salvar curso");
     } finally {
       setSaving(false);
     }

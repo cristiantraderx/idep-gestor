@@ -11,7 +11,6 @@ import {
   CalendarDays,
   Library,
   RotateCcw,
-  AlertTriangle,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
@@ -53,7 +52,7 @@ export function EmprestimosPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<(Emprestimo & { obra_titulo?: string; aluno_nome?: string }) | null>(null);
   const [formData, setFormData] = useState({
-    obra_id: "", aluno_id: "", data_emprestimo: new Date().toISOString().split("T")[0],
+    obra_id: "", aluno_id: "", data_emprestimo: new Date().toISOString()!.split("T")[0]!,
     data_devolucao_prevista: "", status: "ativo" as Emprestimo["status"],
     observacoes: "", unidade_id: "",
   });
@@ -70,7 +69,7 @@ export function EmprestimosPage() {
         supabase.from("obras").select("*").order("titulo"),
         supabase.from("unidades").select("*").eq("ativo", true).order("nome"),
       ]);
-      if (empRes.data) setEmprestimos((empRes.data as any[]).map((e) => ({ ...e, obra_titulo: e.obras?.titulo || "Obra não encontrada", aluno_nome: e.alunos?.nome || "Aluno não encontrado", unidade_nome: e.unidades?.nome || "Não definida" })));
+      if (empRes.data) setEmprestimos((empRes.data as Record<string, unknown>[]).map((e: Record<string, unknown>) => ({ ...e, obra_titulo: (e.obras as Record<string, unknown> | undefined)?.titulo as string || "Obra não encontrada", aluno_nome: (e.alunos as Record<string, unknown> | undefined)?.nome as string || "Aluno não encontrado", unidade_nome: (e.unidades as Record<string, unknown> | undefined)?.nome as string || "Não definida" })));
       if (alunosRes.data) setAlunos(alunosRes.data);
       if (obrasRes.data) setObras(obrasRes.data.filter((o) => o.quantidade_disponivel > 0));
       if (unidRes.data) setUnidades(unidRes.data);
@@ -78,7 +77,7 @@ export function EmprestimosPage() {
     } finally { setLoading(false); }
   }, []);
 
-  useEffect(() => { fetchData(); }, [fetchData]);
+  useEffect(() => { let c = false; queueMicrotask(() => { if (!c) fetchData(); }); return () => { c = true; }; }, [fetchData]);
 
   const alunoOptions = alunos.map((a) => ({ value: a.id, label: a.nome }));
   const obraOptions = obras.map((o) => ({ value: o.id, label: `${o.titulo}${o.autor ? ` - ${o.autor}` : ""} (${o.quantidade_disponivel} disp.)` }));
@@ -87,7 +86,7 @@ export function EmprestimosPage() {
   const openCreate = () => {
     setEditing(null);
     const prev = new Date(); prev.setDate(prev.getDate() + 14);
-    setFormData({ obra_id: "", aluno_id: "", data_emprestimo: new Date().toISOString().split("T")[0], data_devolucao_prevista: prev.toISOString().split("T")[0], status: "ativo", observacoes: "", unidade_id: "" });
+    setFormData({ obra_id: "", aluno_id: "", data_emprestimo: new Date().toISOString()!.split("T")[0]!, data_devolucao_prevista: prev.toISOString()!.split("T")[0]!, status: "ativo", observacoes: "", unidade_id: "" });
     setFormError(""); setModalOpen(true);
   };
 
@@ -117,7 +116,7 @@ export function EmprestimosPage() {
         }
       }
       setModalOpen(false); fetchData();
-    } catch (err: any) { setFormError(err.message || "Erro");
+    } catch (err: unknown) { setFormError(err instanceof Error ? err.message : "Erro");
     } finally { setSaving(false); }
   };
 
@@ -211,7 +210,7 @@ export function EmprestimosPage() {
                       <RotateCcw className="h-3.5 w-3.5" />
                     </button>
                   )}
-                  <button onClick={() => { setEditing(emp); setFormData({ obra_id: emp.obra_id, aluno_id: emp.aluno_id, data_emprestimo: emp.data_emprestimo.split("T")[0], data_devolucao_prevista: emp.data_devolucao_prevista.split("T")[0], status: emp.status, observacoes: emp.observacoes || "", unidade_id: emp.unidade_id }); setFormError(""); setModalOpen(true); }}
+                  <button onClick={() => { setEditing(emp); setFormData({ obra_id: emp.obra_id, aluno_id: emp.aluno_id, data_emprestimo: emp.data_emprestimo!.split("T")[0]!, data_devolucao_prevista: emp.data_devolucao_prevista!.split("T")[0]!, status: emp.status, observacoes: emp.observacoes || "", unidade_id: emp.unidade_id }); setFormError(""); setModalOpen(true); }}
                     className="rounded p-1.5 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"><Edit3 className="h-3.5 w-3.5" /></button>
                 </div>
               </motion.div>

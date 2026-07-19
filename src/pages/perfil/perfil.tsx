@@ -99,13 +99,13 @@ export function PerfilPage() {
       }
 
       if (data) {
-        const profileData = data as any;
+        const profileData = data as Record<string, unknown>;
         setFullProfile({
-          ...profileData,
-          perfil_nome: profileData.perfis?.nome,
-          perfil_codigo: profileData.perfis?.codigo,
-          unidade_nome: profileData.unidades?.nome,
-          unidade_sigla: profileData.unidades?.sigla,
+          ...(profileData as unknown as UserFullProfile),
+          perfil_nome: (profileData.perfis as Record<string, unknown> | undefined)?.nome as string,
+          perfil_codigo: (profileData.perfis as Record<string, unknown> | undefined)?.codigo as string,
+          unidade_nome: (profileData.unidades as Record<string, unknown> | undefined)?.nome as string,
+          unidade_sigla: (profileData.unidades as Record<string, unknown> | undefined)?.sigla as string,
         });
         setAvatarUrl(profileData.avatar_url);
         setEditData({
@@ -130,7 +130,9 @@ export function PerfilPage() {
   }, [user]);
 
   useEffect(() => {
-    fetchFullProfile();
+    let c = false;
+    queueMicrotask(() => { if (!c) fetchFullProfile(); });
+    return () => { c = true; };
   }, [fetchFullProfile]);
 
   // Handle avatar upload
@@ -191,8 +193,8 @@ export function PerfilPage() {
           setAvatarUrl(publicUrl);
         }
       }
-    } catch (err: any) {
-      setEditError("Erro ao fazer upload: " + (err.message || "Erro desconhecido"));
+    } catch (err: unknown) {
+      setEditError("Erro ao fazer upload: " + (err instanceof Error ? err.message : "Erro desconhecido"));
     } finally {
       setAvatarUploading(false);
     }
@@ -231,8 +233,8 @@ export function PerfilPage() {
       fetchFullProfile();
 
       setTimeout(() => setEditSuccess(false), 3000);
-    } catch (err: any) {
-      setEditError(err.message || "Erro ao salvar dados");
+    } catch (err: unknown) {
+      setEditError(err instanceof Error ? err.message : "Erro ao salvar dados");
     } finally {
       setSaving(false);
     }
@@ -266,8 +268,8 @@ export function PerfilPage() {
       setPasswordSection(false);
 
       setTimeout(() => setPasswordSuccess(false), 3000);
-    } catch (err: any) {
-      setPasswordError(err.message || "Erro ao alterar senha");
+    } catch (err: unknown) {
+      setPasswordError(err instanceof Error ? err.message : "Erro ao alterar senha");
     } finally {
       setPasswordSaving(false);
     }

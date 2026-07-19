@@ -9,6 +9,7 @@ import { SidebarLayout } from "@/layouts/sidebar-layout";
 import { AuthLayout } from "@/layouts/auth-layout";
 import { ProtectedRoute } from "@/components/auth/protected-route";
 import { PublicRoute } from "@/components/auth/protected-route";
+import { PageLoader } from "@/components/ui/page-loader";
 
 // Lazy loaded pages
 const DashboardPage = lazy(() =>
@@ -89,6 +90,9 @@ const MatriculasPage = lazy(() =>
   }))
 );
 
+const ChatPage = lazy(() =>
+  import("@/pages/chat/ChatPage").then((m) => ({ default: m.default }))
+);
 const CursosListPage = lazy(() =>
   import("@/pages/cursos/cursos-list").then((m) => ({
     default: m.CursosListPage,
@@ -340,19 +344,6 @@ const ConfiguracoesPage = lazy(() =>
     default: m.ConfiguracoesPage,
   }))
 );
-
-// Loading fallback
-function PageLoader() {
-  return (
-    <div className="flex items-center justify-center h-64">
-      <div className="space-y-4 w-full max-w-md">
-        <div className="skeleton h-8 w-48" />
-        <div className="skeleton h-32 w-full" />
-        <div className="skeleton h-24 w-full" />
-      </div>
-    </div>
-  );
-}
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -907,7 +898,15 @@ export const router = createBrowserRouter(
             }
           />
 
-          {/* Configurações Module */}
+          <Route
+            path="chat"
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <ChatPage />
+              </Suspense>
+            }
+          />
+
           <Route
             path="configuracoes"
             element={

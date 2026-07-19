@@ -4,13 +4,10 @@ import {
   Plus,
   Search,
   Loader2,
-  Edit3,
   Trash2,
   RefreshCw,
   User,
   CalendarDays,
-  GraduationCap,
-  CheckCircle2,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
@@ -92,10 +89,10 @@ export function DeclaracoesPage() {
 
       if (declaracoesRes.data) {
         setDeclaracoes(
-          (declaracoesRes.data as any[]).map((d) => ({
+          (declaracoesRes.data as Record<string, unknown>[]).map((d: Record<string, unknown>) => ({
             ...d,
-            aluno_nome: d.alunos?.nome || "Aluno não encontrado",
-            unidade_nome: d.unidades?.nome || "Não definida",
+            aluno_nome: (d.alunos as Record<string, unknown> | undefined)?.nome as string || "Aluno não encontrado",
+            unidade_nome: (d.unidades as Record<string, unknown> | undefined)?.nome as string || "Não definida",
           }))
         );
       }
@@ -108,9 +105,7 @@ export function DeclaracoesPage() {
     }
   }, []);
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+  useEffect(() => { let c = false; queueMicrotask(() => { if (!c) fetchData(); }); return () => { c = true; }; }, [fetchData]);
 
   const alunoOptions = alunos.map((a) => ({ value: a.id, label: a.nome }));
   const unidadeOptions = unidades.map((u) => ({ value: u.id, label: `${u.nome} (${u.sigla})` }));
@@ -171,8 +166,8 @@ export function DeclaracoesPage() {
 
       setModalOpen(false);
       fetchData();
-    } catch (err: any) {
-      setFormError(err.message || "Erro ao salvar declaração");
+    } catch (err: unknown) {
+      setFormError(err instanceof Error ? err.message : "Erro ao salvar declaração");
     } finally {
       setSaving(false);
     }

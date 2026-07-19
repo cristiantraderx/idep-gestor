@@ -2,28 +2,8 @@ import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Search,
-  LayoutDashboard,
   Users,
-  GraduationCap,
-  BookOpen,
-  FileText,
-  DollarSign,
-  ShoppingCart,
-  Package,
-  Building2,
-  Library,
-  Calendar,
   MessageSquare,
-  FileStack,
-  Projector,
-  Mic,
-  HeadphonesIcon,
-  Monitor,
-  Shield,
-  BarChart3,
-  PieChart,
-  FolderOpen,
-  UserCheck,
   ShieldCheck,
   KeyRound,
   Sparkles,
@@ -69,7 +49,9 @@ function addRecent(result: SearchResult) {
     recent.unshift(result);
     if (recent.length > MAX_RECENT) recent.pop();
     localStorage.setItem(RECENT_KEY, JSON.stringify(recent));
-  } catch {}
+  } catch {
+    // ignore
+  }
 }
 
 // ============================================================
@@ -82,7 +64,7 @@ function buildSearchIndex(): SearchResult[] {
   for (const entry of navigationItems) {
     if (entry.type === "item") {
       const item = entry as NavItem;
-      const moduleInfo = getModuleInfo(item.href.split("/")[0] === "" ? item.href.split("/")[1] : item.href.split("/")[0]);
+      const moduleInfo = getModuleInfo(item.href!.split("/")[0]! === "" ? item.href!.split("/")[1]! : item.href!.split("/")[0]!);
 
       index.push({
         id: `nav-${item.href}`,
@@ -248,7 +230,7 @@ export function GlobalSearch({ open, onClose }: GlobalSearchProps) {
 
   // Reset selected index when results change
   useEffect(() => {
-    setSelectedIndex(0);
+    let c = false; queueMicrotask(() => { if (!c) setSelectedIndex(0); }); return () => { c = true; };
   }, [results.length]);
 
   // Focus input when opened
@@ -257,7 +239,7 @@ export function GlobalSearch({ open, onClose }: GlobalSearchProps) {
       inputRef.current.focus();
     }
     if (!open) {
-      setQuery("");
+      let c = false; queueMicrotask(() => { if (!c) setQuery(""); }); return () => { c = true; };
     }
   }, [open]);
 

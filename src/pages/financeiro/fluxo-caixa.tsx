@@ -8,7 +8,6 @@ import {
   Loader2,
   RefreshCw,
   Wallet,
-  PiggyBank,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
@@ -97,7 +96,7 @@ export function FluxoCaixaPage() {
     }
   }, []);
 
-  useEffect(() => { fetchData(); }, [fetchData]);
+  useEffect(() => { let c = false; queueMicrotask(() => { if (!c) fetchData(); }); return () => { c = true; }; }, [fetchData]);
 
   if (loading) {
     return (
@@ -110,7 +109,7 @@ export function FluxoCaixaPage() {
   const bestMonth = fluxoData.length > 0
     ? fluxoData.reduce((best, curr) => curr.saldo > best!.saldo ? curr : best, fluxoData[0])
     : null;
-  const worstMonth = fluxoData.length > 0
+  const _worstMonth = fluxoData.length > 0
     ? fluxoData.reduce((worst, curr) => curr.saldo < worst!.saldo ? curr : worst, fluxoData[0])
     : null;
 

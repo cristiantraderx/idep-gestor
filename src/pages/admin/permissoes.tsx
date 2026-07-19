@@ -97,12 +97,16 @@ export function AdminPermissoesPage() {
   }, []);
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    let c = false;
+    queueMicrotask(() => { if (!c) fetchData(); });
+    return () => { c = true; };
+  }, [fetchData]);
 
   useEffect(() => {
     if (selectedPerfilId) {
-      fetchPermissoes(selectedPerfilId);
+      let c = false;
+      queueMicrotask(() => { if (!c) fetchPermissoes(selectedPerfilId); });
+      return () => { c = true; };
     }
   }, [selectedPerfilId, fetchPermissoes]);
 
@@ -144,7 +148,7 @@ export function AdminPermissoesPage() {
       setSuccessMessage("Permissões salvas com sucesso!");
       setChanged(false);
       setTimeout(() => setSuccessMessage(""), 3000);
-    } catch (err: any) {
+    } catch (_err: unknown) {
       setSuccessMessage("Erro ao salvar permissões");
     } finally {
       setSaving(false);
@@ -152,7 +156,7 @@ export function AdminPermissoesPage() {
   };
 
   const filteredModulos = MODULOS.filter((m) =>
-    MODULO_LABELS[m].toLowerCase().includes(searchModule.toLowerCase())
+    MODULO_LABELS[m]!.toLowerCase().includes(searchModule.toLowerCase())
   );
 
   const selectedPerfil = perfis.find((p) => p.id === selectedPerfilId);

@@ -96,20 +96,12 @@ export function Sidebar({
         )}
       >
         <div className="flex h-14 items-center justify-between border-b border-sidebar-border px-4 shrink-0">
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center">
             <img
               src="/IDEP_2019-VERTICAL%20(1).png"
               alt="IDEP Logo"
-              className="h-8 w-auto object-contain"
+              className="h-10 w-auto object-contain"
             />
-            <div className="flex flex-col">
-              <span className="text-sm font-bold text-sidebar-foreground leading-tight">
-                IDEP-Gestor
-              </span>
-              <span className="text-[10px] text-muted-foreground leading-tight">
-                Enterprise
-              </span>
-            </div>
           </div>
           <Button
             variant="ghost"
@@ -223,7 +215,7 @@ export function Sidebar({
 // Desktop sidebar content (extracted for reuse with collapse)
 function DesktopContent({
   isCollapsed,
-  activeSection,
+  _activeSection,
   openSubMenus,
   onToggleCollapse,
   onNavigate,
@@ -248,27 +240,19 @@ function DesktopContent({
         )}
       >
         {!isCollapsed && (
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center">
             <img
               src="/IDEP_2019-VERTICAL%20(1).png"
               alt="IDEP Logo"
-              className="h-8 w-auto object-contain"
+              className="h-10 w-auto object-contain"
             />
-            <div className="flex flex-col">
-              <span className="text-sm font-bold text-sidebar-foreground leading-tight">
-                IDEP-Gestor
-              </span>
-              <span className="text-[10px] text-muted-foreground leading-tight">
-                Enterprise
-              </span>
-            </div>
           </div>
         )}
         {isCollapsed && (
           <img
             src="/IDEP_2019-VERTICAL%20(1).png"
             alt="IDEP Logo"
-            className="h-7 w-auto max-w-[44px] object-contain"
+            className="h-8 w-auto max-w-[48px] object-contain"
           />
         )}
         <Button

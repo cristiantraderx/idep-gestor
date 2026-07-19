@@ -8,7 +8,6 @@ import {
   Trash2,
   RefreshCw,
   Lock,
-  Users,
   Hash,
   Star,
 } from "lucide-react";
@@ -16,7 +15,7 @@ import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import type { Perfil } from "@/integrations/supabase/types";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -68,7 +67,9 @@ export function AdminPerfisPage() {
   }, []);
 
   useEffect(() => {
-    fetchData();
+    let c = false;
+    queueMicrotask(() => { if (!c) fetchData(); });
+    return () => { c = true; };
   }, [fetchData]);
 
   const openCreateModal = () => {
@@ -130,8 +131,8 @@ export function AdminPerfisPage() {
 
       setModalOpen(false);
       fetchData();
-    } catch (err: any) {
-      setFormError(err.message || "Erro ao salvar perfil");
+    } catch (err: unknown) {
+      setFormError(err instanceof Error ? err.message : "Erro ao salvar perfil");
     } finally {
       setSaving(false);
     }

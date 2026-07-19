@@ -10,19 +10,20 @@ import {
   DollarSign,
   Users,
   TrendingUp,
+  type LucideIcon,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { formatCurrency } from "@/lib/utils";
+
 
 type ReportType = {
   id: string;
   title: string;
   description: string;
   category: "academico" | "financeiro" | "rh" | "patrimonio" | "ouvidoria";
-  icon: any;
+  icon: LucideIcon;
   color: string;
   formats: ("pdf" | "excel" | "csv")[];
 };

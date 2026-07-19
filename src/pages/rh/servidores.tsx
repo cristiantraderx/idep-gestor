@@ -8,11 +8,7 @@ import {
   Trash2,
   RefreshCw,
   Mail,
-  Phone,
-  CalendarDays,
-  Building2,
   Briefcase,
-  Clock,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
@@ -23,9 +19,8 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { cn, formatFullDate } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 function getInitials(name: string): string {
   return name.split(" ").map((n) => n[0]).filter(Boolean).slice(0, 2).join("").toUpperCase();
@@ -70,13 +65,13 @@ export function ServidoresPage() {
         supabase.from("servidores").select("*, unidades(nome, sigla)").order("created_at", { ascending: false }),
         supabase.from("unidades").select("*").eq("ativo", true).order("nome"),
       ]);
-      if (servRes.data) setServidores((servRes.data as any[]).map((s) => ({ ...s, unidade_nome: s.unidades?.nome || "Não definida" })));
+      if (servRes.data) setServidores((servRes.data as Record<string, unknown>[]).map((s: Record<string, unknown>) => ({ ...s, unidade_nome: (s.unidades as Record<string, unknown> | undefined)?.nome as string || "Não definida" })));
       if (unidRes.data) setUnidades(unidRes.data);
     } catch (err) { console.error(err);
     } finally { setLoading(false); }
   }, []);
 
-  useEffect(() => { fetchData(); }, [fetchData]);
+  useEffect(() => { let c = false; queueMicrotask(() => { if (!c) fetchData(); }); return () => { c = true; }; }, [fetchData]);
 
   const unidadeOptions = unidades.map((u) => ({ value: u.id, label: `${u.nome} (${u.sigla})` }));
 
@@ -112,7 +107,7 @@ export function ServidoresPage() {
       if (editing) { const { error } = await supabase.from("servidores").update(payload).eq("id", editing.id); if (error) { setFormError(error.message); return; } }
       else { const { error } = await supabase.from("servidores").insert(payload); if (error) { setFormError(error.message); return; } }
       setModalOpen(false); fetchData();
-    } catch (err: any) { setFormError(err.message || "Erro");
+    } catch (err: unknown) { setFormError(err instanceof Error ? err.message : "Erro");
     } finally { setSaving(false); }
   };
 
@@ -211,7 +206,7 @@ export function ServidoresPage() {
             <Input label="Telefone" value={formData.telefone} onChange={(e) => setFormData({ ...formData, telefone: e.target.value })} placeholder="(69) 3333-3333" disabled={saving} />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <Select label="Regime *" options={REGIME_OPTIONS} value={formData.regime} onChange={(e) => setFormData({ ...formData, regime: e.target.value as Servidor["regime"] })} disabled={saving} />
+            <Select label="Regime *" options={REGIME_OPTIONS} value={formData.regime ?? ""} onChange={(e) => setFormData({ ...formData, regime: (e.target.value || "") as Servidor["regime"] })} disabled={saving} />
             <Input label="Data de Admissão" type="date" value={formData.data_admissao} onChange={(e) => setFormData({ ...formData, data_admissao: e.target.value })} disabled={saving} />
             <Input label="Carga Horária (h/semana)" type="number" value={formData.carga_horaria} onChange={(e) => setFormData({ ...formData, carga_horaria: e.target.value })} placeholder="Ex: 40" disabled={saving} />
           </div>

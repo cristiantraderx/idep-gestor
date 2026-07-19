@@ -38,8 +38,9 @@ export function MatrizCurricularPage() {
 
       if (data) {
         setCursos(data);
-        if (data.length > 0 && !selectedCursoId) {
-          setSelectedCursoId(data[0].id);
+        if (data.length > 0) {
+          // Só auto-seleciona o primeiro curso se nenhum estiver selecionado ainda
+          setSelectedCursoId((prev) => prev || data[0].id);
         }
       }
     } catch (err) {
@@ -47,7 +48,7 @@ export function MatrizCurricularPage() {
     } finally {
       setLoading(false);
     }
-  }, [selectedCursoId]);
+  }, []);
 
   const fetchDisciplinas = useCallback(async (cursoId: string) => {
     if (!cursoId) return;
@@ -69,12 +70,16 @@ export function MatrizCurricularPage() {
   }, []);
 
   useEffect(() => {
-    fetchCursos();
-  }, []);
+    let c = false;
+    queueMicrotask(() => { if (!c) fetchCursos(); });
+    return () => { c = true; };
+  }, [fetchCursos]);
 
   useEffect(() => {
     if (selectedCursoId) {
-      fetchDisciplinas(selectedCursoId);
+      let c = false;
+      queueMicrotask(() => { if (!c) fetchDisciplinas(selectedCursoId); });
+      return () => { c = true; };
     }
   }, [selectedCursoId, fetchDisciplinas]);
 

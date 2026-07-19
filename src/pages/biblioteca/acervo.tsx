@@ -9,8 +9,6 @@ import {
   RefreshCw,
   BookOpen,
   User,
-  CalendarDays,
-  Hash,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
@@ -21,8 +19,8 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { cn } from "@/lib/utils";
+
+
 
 const TIPO_OBRA_OPTIONS = [
   { value: "livro", label: "Livro" },
@@ -71,13 +69,11 @@ export function AcervoPage() {
         supabase.from("obras").select("*, unidades(nome, sigla)").order("created_at", { ascending: false }),
         supabase.from("unidades").select("*").eq("ativo", true).order("nome"),
       ]);
-      if (obrasRes.data) setObras((obrasRes.data as any[]).map((o) => ({ ...o, unidade_nome: o.unidades?.nome || "Não definida" })));
+      if (obrasRes.data) setObras((obrasRes.data as Record<string, unknown>[]).map((o: Record<string, unknown>) => ({ ...o, unidade_nome: (o.unidades as Record<string, unknown> | undefined)?.nome as string || "Não definida" })));
       if (unidRes.data) setUnidades(unidRes.data);
     } catch (err) { console.error(err);
     } finally { setLoading(false); }
-  }, []);
-
-  useEffect(() => { fetchData(); }, [fetchData]);
+  }, []);  useEffect(() => { let c = false; queueMicrotask(() => { if (!c) fetchData(); }); return () => { c = true; }; }, [fetchData]);
 
   const unidadeOptions = unidades.map((u) => ({ value: u.id, label: `${u.nome} (${u.sigla})` }));
 
@@ -113,7 +109,7 @@ export function AcervoPage() {
       if (editing) { const { error } = await supabase.from("obras").update(payload).eq("id", editing.id); if (error) { setFormError(error.message); return; } }
       else { const { error } = await supabase.from("obras").insert(payload); if (error) { setFormError(error.message); return; } }
       setModalOpen(false); fetchData();
-    } catch (err: any) { setFormError(err.message || "Erro");
+    } catch (err: unknown) { setFormError(err instanceof Error ? err.message : "Erro");
     } finally { setSaving(false); }
   };
 

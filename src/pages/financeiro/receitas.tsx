@@ -10,7 +10,6 @@ import {
   CalendarDays,
   Building2,
   DollarSign,
-  PieChartIcon,
   BarChart3,
 } from "lucide-react";
 import { motion } from "framer-motion";
@@ -34,7 +33,6 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Legend,
 } from "recharts";
 
 const CATEGORIA_OPTIONS = [
@@ -64,7 +62,7 @@ const CATEGORIA_LABELS: Record<string, string> = {
 };
 
 export function ReceitasPage() {
-  const [receitas, setReceitas] = useState<any[]>([]);
+  const [receitas, setReceitas] = useState<Record<string, unknown>[]>([]);
   const [unidades, setUnidades] = useState<Unidade[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -73,7 +71,7 @@ export function ReceitasPage() {
   const [monthlyChart, setMonthlyChart] = useState<{ month: string; valor: number }[]>([]);
 
   const [modalOpen, setModalOpen] = useState(false);
-  const [editingReceita, setEditingReceita] = useState<any>(null);
+  const [editingReceita, setEditingReceita] = useState<Record<string, unknown> | null>(null);
   const [formData, setFormData] = useState({
     descricao: "",
     valor: "",
@@ -97,17 +95,17 @@ export function ReceitasPage() {
       ]);
 
       if (receitasRes.data) {
-        const data = (receitasRes.data as any[]).map((r) => ({
+        const typedData = (receitasRes.data as Record<string, unknown>[]).map((r: Record<string, unknown>) => ({
           ...r,
-          unidade_nome: r.unidades?.nome || "Não definida",
+          unidade_nome: (r.unidades as Record<string, unknown> | undefined)?.nome as string || "Não definida",
         }));
-        setReceitas(data);
+        setReceitas(typedData);
 
         // Build category chart
         const catMap: Record<string, number> = {};
-        data.forEach((r: any) => {
-          const cat = r.categoria || "outros";
-          catMap[cat] = (catMap[cat] || 0) + (r.valor || 0);
+        typedData.forEach((r: Record<string, unknown>) => {
+          const cat = (r.categoria as string) || "outros";
+          catMap[cat] = (catMap[cat] || 0) + ((r.valor as number) || 0);
         });
         setChartData(
           Object.entries(catMap)
@@ -115,7 +113,7 @@ export function ReceitasPage() {
             .map(([key, value], i) => ({
               name: CATEGORIA_LABELS[key] || key,
               value: Math.round(value),
-              color: DONUT_COLORS[i % DONUT_COLORS.length],
+              color: DONUT_COLORS[i % DONUT_COLORS.length]!,
             }))
         );
 
@@ -136,12 +134,12 @@ export function ReceitasPage() {
           months.map((m) => ({
             month: m.month,
             valor: Math.round(
-              data
-                .filter((r: any) => {
-                  const d = new Date(r.data_recebimento);
+              typedData
+                .filter((r: Record<string, unknown>) => {
+                  const d = new Date(r.data_recebimento as string);
                   return d >= m.start && d <= m.end;
                 })
-                .reduce((acc: number, r: any) => acc + (r.valor || 0), 0)
+                .reduce((acc: number, r: Record<string, unknown>) => acc + ((r.valor as number) || 0), 0)
             ),
           }))
         );
@@ -154,7 +152,7 @@ export function ReceitasPage() {
     }
   }, []);
 
-  useEffect(() => { fetchData(); }, [fetchData]);
+  useEffect(() => { let c = false; queueMicrotask(() => { if (!c) fetchData(); }); return () => { c = true; }; }, [fetchData]);
 
   const unidadeOptions = unidades.map((u) => ({ value: u.id, label: `${u.nome} (${u.sigla})` }));
 
@@ -173,16 +171,16 @@ export function ReceitasPage() {
     setModalOpen(true);
   };
 
-  const openEditModal = (rec: any) => {
+  const openEditModal = (rec: Record<string, unknown>) => {
     setEditingReceita(rec);
     setFormData({
-      descricao: rec.descricao,
-      valor: rec.valor?.toString() || "",
-      data_recebimento: rec.data_recebimento?.split("T")[0] || "",
-      categoria: rec.categoria || "mensalidade",
-      origem: rec.origem || "",
-      documento: rec.documento || "",
-      unidade_id: rec.unidade_id,
+      descricao: rec.descricao as string,
+      valor: (rec.valor as number)?.toString() || "",
+      data_recebimento: (rec.data_recebimento as string)?.split("T")[0] || "",
+      categoria: (rec.categoria as string) || "mensalidade",
+      origem: (rec.origem as string) || "",
+      documento: (rec.documento as string) || "",
+      unidade_id: rec.unidade_id as string,
     });
     setFormError("");
     setModalOpen(true);
@@ -215,8 +213,8 @@ export function ReceitasPage() {
       }
       setModalOpen(false);
       fetchData();
-    } catch (err: any) {
-      setFormError(err.message || "Erro ao salvar receita");
+    } catch (err: unknown) {
+      setFormError(err instanceof Error ? err.message : "Erro ao salvar receita");
     } finally { setSaving(false); }
   };
 
@@ -228,14 +226,18 @@ export function ReceitasPage() {
     }
   };
 
-  const totalReceitas = receitas.reduce((acc, r) => acc + (r.valor || 0), 0);
+  const totalReceitas = receitas.reduce((acc, r) => acc + ((r.valor as number) || 0), 0);
 
   const filtered = receitas.filter((r) => {
+    const descricao = r.descricao as string;
+    const origem = r.origem as string | undefined;
+    const documento = r.documento as string | undefined;
+    const categoria = r.categoria as string;
     const matchesSearch =
-      r.descricao.toLowerCase().includes(search.toLowerCase()) ||
-      (r.origem && r.origem.toLowerCase().includes(search.toLowerCase())) ||
-      (r.documento && r.documento.includes(search));
-    if (categoriaFilter !== "todas") return matchesSearch && r.categoria === categoriaFilter;
+      descricao.toLowerCase().includes(search.toLowerCase()) ||
+      (origem && origem.toLowerCase().includes(search.toLowerCase())) ||
+      (documento && documento.includes(search));
+    if (categoriaFilter !== "todas") return matchesSearch && categoria === categoriaFilter;
     return matchesSearch;
   });
 
@@ -295,7 +297,7 @@ export function ReceitasPage() {
                         ))}
                       </Pie>
                       <Tooltip
-                        content={({ active, payload }: any) =>
+                        content={({ active, payload }: { active?: boolean; payload?: Array<{ name: string; value: number }> }) =>
                           active && payload?.length ? (
                             <div className="rounded-lg border border-border bg-card px-3 py-2 text-xs shadow-sm">
                               <p className="font-medium text-foreground">{payload[0].name}</p>
@@ -345,7 +347,7 @@ export function ReceitasPage() {
                     <YAxis tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} axisLine={false} tickLine={false}
                       tickFormatter={(val) => val >= 1000 ? `${(val / 1000).toFixed(0)}k` : val} />
                     <Tooltip
-                      content={({ active, payload, label }: any) =>
+                      content={({ active, payload, label }: { active?: boolean; payload?: Array<{ name: string; value: number }>; label?: string }) =>
                         active && payload?.length ? (
                           <div className="rounded-lg border border-border bg-card px-3 py-2 text-xs shadow-sm">
                             <p className="font-medium text-foreground mb-1">{label}</p>

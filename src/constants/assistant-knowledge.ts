@@ -1,8 +1,3 @@
-// ============================================================
-// IDEP-Gestor · Knowledge Base do Assistente Virtual
-// Enciclopédia completa do sistema para respostas inteligentes
-// ============================================================
-
 export interface KnowledgeEntry {
   keywords: string[];
   title: string;
@@ -13,404 +8,677 @@ export interface KnowledgeEntry {
 
 const KB: KnowledgeEntry[] = [
   // ============================================================
-  // SISTEMA - GERAL
+  // CAPACIDADES DO ASSISTENTE
   // ============================================================
   {
-    keywords: ["sistema", "sobre", "idep", "gestor", "o que é", "plataforma"],
-    title: "🏫 Sobre o IDEP-Gestor",
+    keywords: ["assistente", "ajudar", "pode fazer", "pode", "pode ajudar", "sabe fazer", "fazer", "faz", "habilidades", "capacidades", "funções", "funcionalidades", "recursos", "o que você faz", "o que você pode fazer", "como funciona", "para que serve", "chat", "bot", "inteligência artificial", "ia", "deepseek", "openai", "assistente virtual", "assistente idep", "como usar", "como funciona o assistente"],
+    title: "🤖 Capacidades do Assistente Virtual",
     message:
-      "O **IDEP-Gestor** é um sistema de gestão institucional completo desenvolvido para o **Instituto de Desenvolvimento Profissional do Estado de Rondônia (IDEP)**. Ele integra todos os processos administrativos, acadêmicos e financeiros da instituição em uma única plataforma.\n\n**Tecnologias:** React + TypeScript + Vite, TailwindCSS, Supabase (Auth + Banco de Dados + Realtime), React Router, TanStack Query, Framer Motion.\n\n**Versão:** Enterprise v1.0\n**Desenvolvido por:** Cristian Marques",
+      "Olá! Sou o **Assistente Virtual do IDEP-Gestor**! 🚀\n\n" +
+      "Posso ajudar você de várias formas:\n\n" +
+      "📖 **Tirar Dúvidas** — Pergunte sobre qualquer módulo do sistema!\n" +
+      "   • \"Como cadastrar um aluno?\"\n" +
+      "   • \"O que é o módulo financeiro?\"\n" +
+      "   • \"Quais os atalhos do teclado?\"\n\n" +
+      "🧭 **Navegar no Sistema** — Posso te levar para qualquer página!\n" +
+      "   • \"Me leve para o financeiro\"\n" +
+      "   • \"Abrir relatórios\"\n" +
+      "   • \"Onde fica a biblioteca?\"\n\n" +
+      "⚡ **Executar Ações** — Posso criar, editar e consultar dados!\n" +
+      "   • \"Quantos alunos estão cadastrados?\"\n" +
+      "   • \"Crie um novo curso técnico\"\n" +
+      "   • \"Mostre as despesas deste mês\"\n\n" +
+      "💡 **Dar Dicas** — Atalhos, produtividade e boas práticas!\n" +
+      "   • \"Dicas de produtividade\"\n" +
+      "   • \"Atalhos do teclado\"\n" +
+      "   • \"Como ser mais eficiente\"\n\n" +
+      "📊 **Gerar Relatórios** — Análises e estatísticas do sistema!\n" +
+      "   • \"Relatório de alunos\"\n" +
+      "   • \"Estatísticas do sistema\"\n" +
+      "   • \"Exportar dados\"\n\n" +
+      "🎤 **Comandos de Voz** — Use **Ctrl+Shift+V** para falar comigo!\n\n" +
+      ("🔮 **Modo IA** — Ative o 🧠 no cabeçalho do chat para respostas\n" +
+      "   ainda mais inteligentes usando DeepSeek ou OpenAI!\n\n") +
+      "**💬 Como posso ajudá-lo hoje?**",
+    category: "geral",
+  },
+  // ============================================================
+  // VISÃO GERAL DO SISTEMA
+  // ============================================================
+  {
+    keywords: ["sobre", "idep", "gestor", "sistema", "plataforma", "o que é"],
+    title: "🏢 Sobre o IDEP-Gestor",
+    message:
+      "O **IDEP-Gestor** é o Sistema Integrado de Gestão Institucional do **Instituto de Desenvolvimento Profissional do Estado de Rondônia (IDEP)**.\n\n" +
+      "🎯 **Propósito:** Centralizar e facilitar a gestão administrativa, acadêmica e financeira da instituição em uma única plataforma moderna e intuitiva.\n\n" +
+      "⚙️ **Tecnologias:** React + TypeScript + Vite + Supabase + Tailwind CSS + Framer Motion\n\n" +
+      "📊 **Módulos principais:**\n" +
+      "• 📚 Acadêmico (Alunos, Turmas, Biblioteca)\n" +
+      "• 💰 Gestão (Financeiro, RH, Almoxarifado)\n" +
+      "• 🏛️ Administração (Usuários, Perfis, Permissões)\n" +
+      "• 📋 Serviços (Secretaria, TI, Ouvidoria, Patrimônio)\n" +
+      "• 📈 BI & Relatórios (Dashboard, Gráficos, Exportação)\n\n" +
+      "**Versão:** Enterprise 1.0",
     category: "geral",
   },
   {
-    keywords: ["navegar", "navegação", "menu", "sidebar", "lateral", "como usar"],
+    keywords: ["navegação", "menu", "sidebar", "como usar", "interface", "layout"],
     title: "🧭 Navegação no Sistema",
     message:
-      "A navegação principal é feita pelo **menu lateral (sidebar)** localizado à esquerda. Ele está organizado em seções:\n\n**Principal:** Dashboard\n**Acadêmico:** Alunos, Cursos, Turmas, Secretaria\n**Gestão:** RH, Financeiro, Compras, Almoxarifado, Patrimônio\n**Serviços:** Biblioteca, Agenda, TI, Ouvidoria\n**Inteligência:** Relatórios, BI, Projetos\n**Administração:** Usuários, Perfis, Permissões\n**Sistema:** Auditoria, Configurações\n\n💡 **Dica:** Você pode recolher o sidebar clicando no ícone de menu no topo, ou usar a versão mobile com o botão hambúrguer.",
+      "A navegação é feita através do **menu lateral (sidebar)** à esquerda.\n\n" +
+      "📌 **Dicas de navegação:**\n" +
+      "• Clique nos itens do menu para expandir/colapsar seções\n" +
+      "• Use **Ctrl+K** para abrir a busca global rápida\n" +
+      "• O menu recolhe automaticamente em telas menores\n" +
+      "• Ícones coloridos indicam diferentes módulos\n\n" +
+      "📱 **Responsivo:** O sistema se adapta a tablets e celulares automaticamente.\n\n" +
+      "💡 **Dica:** Passe o mouse sobre os ícones do menu recolhido para ver os nomes das seções.",
     category: "dica",
   },
   {
-    keywords: ["atalho", "teclado", "shortcut", "ctrl+k", "busca rápida"],
+    keywords: ["atalhos", "teclado", "shortcuts", "hotkeys", "ctrl", "k"],
     title: "⌨️ Atalhos de Teclado",
     message:
-      "O sistema possui atalhos para agilizar seu trabalho:\n\n**Ctrl+K** — Abre a busca rápida (pesquise em todos os módulos)\n**Esc** — Fecha modais e diálogos\n**Enter** — Envia formulários e mensagens no chat\n\n💡 Mais atalhos serão adicionados em futuras atualizações.",
+      "Domine o sistema com esses atalhos:\n\n" +
+      "🔍 **Ctrl+K** → Busca Global\n" +
+      "🆕 **Ctrl+N** → Novo Registro (na página atual)\n" +
+      "💬 **Ctrl+Espaço** → Abrir Assistente\n" +
+      "🏠 **Alt+Home** → Ir para Dashboard\n" +
+      "🔙 **Alt+Seta Esquerda** → Voltar\n" +
+      "🔜 **Alt+Seta Direita** → Avançar\n\n" +
+      "Mais atalhos em breve nas configurações do sistema!",
     category: "dica",
   },
-  {
-    keywords: ["tema", "dark", "light", "modo", "claro", "escuro", "noturno"],
-    title: "🎨 Temas do Sistema",
-    message:
-      "O IDEP-Gestor suporta dois temas:\n\n**🌞 Modo Claro** — Ideal para ambientes bem iluminados\n**🌙 Modo Escuro** — Reduz o cansaço visual, ótimo para uso noturno\n\nPara alternar, clique no ícone de 🌙/☀️ no canto superior direito do header. Sua preferência fica salva automaticamente.",
-    category: "dica",
-  },
-  {
-    keywords: ["tela cheia", "fullscreen", "maximizar", "f11"],
-    title: "🖥️ Modo Tela Cheia",
-    message:
-      "Você pode usar o sistema em **tela cheia** para aproveitar melhor o espaço:\n\nClique no ícone **⛶** (Maximize2) no header para ativar o modo tela cheia.\nOu use a tecla **F11** do seu navegador.\n\nIsso é especialmente útil no Dashboard e em relatórios.",
-    category: "dica",
-  },
-  {
-    keywords: ["assistente", "bot", "chat", "ajuda", "virtual", "robô", "robozinho"],
-    title: "🤖 Sobre o Assistente Virtual",
-    message:
-      "Eu sou o **Assistente Virtual do IDEP-Gestor**! 🎉\n\n**O que eu posso fazer:**\n✅ Explicar como usar qualquer módulo do sistema\n✅ Dar dicas e tutoriais passo a passo\n✅ Explicar a estrutura do banco de dados\n✅ Ajudar com administração de usuários e permissões\n✅ Sugerir boas práticas\n✅ Tirar dúvidas sobre funcionalidades\n\n**Como me usar:**\n• Clique no robô 🦾 para abrir o chat\n• Escolha uma das ações rápidas\n• Ou digite sua pergunta diretamente\n• Me arraste para qualquer lugar da tela!\n\n💬 **Pergunte-me qualquer coisa sobre o sistema!**",
-    category: "geral",
-  },
-  {
-    keywords: ["notificações", "notificação", "notificacao", "sino", "alerta", "bell"],
-    title: "🔔 Central de Notificações",
-    message:
-      "O sistema possui um **sistema de notificações em tempo real**!\n\n**Funcionalidades:**\n• 🔴 Badge com número de notificações não lidas\n• 📋 Dropdown rápido no header\n• 🔄 Atualização em tempo real via Supabase Realtime\n• 🏠 Central de Notificações completa em /notificacoes\n\n**Tipos de notificação:**\n📌 Informativo — ✅ Sucesso — ⚠️ Aviso — ❌ Erro — ⚙️ Sistema\n\n💡 Você pode marcar como lida, marcar todas como lidas ou excluir notificações.",
-    link: "/notificacoes",
-    category: "modulo",
-  },
-
   // ============================================================
-  // DASHBOARD
+  // MÓDULO ACADÊMICO
   // ============================================================
   {
-    keywords: ["dashboard", "kpi", "indicador", "métrica", "home", "início", "inicio", "principal"],
-    title: "📊 Dashboard Executivo",
+    keywords: ["aluno", "alunos", "cadastrar", "matricular", "matrícula"],
+    title: "🎓 Cadastro de Alunos",
     message:
-      "O **Dashboard** é a tela inicial do sistema, onde você encontra uma visão executiva completa:\n\n**Indicadores (KPIs):**\n• 👥 Total de Alunos — 1.247\n• 👨‍🏫 Professores Ativos — 89\n• 📚 Cursos Ativos — 24\n• 💰 Receita Mensal — R$ 1.2M\n\n**Funcionalidades:**\n• Cards com variação percentual vs. mês anterior\n• Seletor de unidades (Sede, Filiais)\n• Badge de status do sistema (Online)\n• Atividades recentes\n• Estatísticas rápidas (frequência, salas, contratos, etc.)\n\n💡 **Dica:** Use o seletor de unidades para filtrar dados por filial!",
-    link: "/dashboard",
-    category: "modulo",
-  },
-
-  // ============================================================
-  // ALUNOS
-  // ============================================================
-  {
-    keywords: [
-      "aluno", "alunos", "cadastrar", "cadastro", "estudante", "discente",
-      "matricular", "matrícula", "matricula", "nota", "frequência", "frequencia",
-      "histórico", "historico", "transferir", "transferência", "cpf",
-    ],
-    title: "📋 Módulo de Alunos",
-    message:
-      "O módulo de **Alunos** permite a gestão completa do corpo discente.\n\n**📍 Onde encontrar:** Menu lateral → Acadêmico → Alunos\n\n**Funcionalidades implementadas:**\n✅ Lista completa com busca por nome, CPF ou email\n✅ Filtros: Todos / Ativos / Inativos\n✅ Cadastro completo (dados pessoais, contato, endereço, filiação)\n✅ Edição de dados\n✅ Exclusão com confirmação\n✅ Modal de detalhes com matrículas do aluno\n✅ Matrículas em cursos/turmas\n\n**📋 Tutorial - Cadastrar Aluno:**\n1. Vá em Alunos e clique em \"Novo Aluno\"\n2. Preencha nome completo, CPF, RG, data de nascimento\n3. Adicione contatos (email, celular)\n4. Informe endereço, cidade e estado\n5. Preencha filiação (nome dos pais)\n6. Selecione a unidade\n7. Clique em \"Cadastrar aluno\"\n\n**📋 Tutorial - Matricular Aluno:**\n1. Vá em Alunos > Matrículas\n2. Clique em \"Nova Matrícula\"\n3. Selecione o aluno, curso e turma\n4. Informe a data da matrícula e forma de ingresso\n5. Clique em \"Realizar matrícula\"\n\n💡 **Dica:** O CPF e o email do aluno podem ser usados para busca rápida na lista!",
+      "Para **cadastrar um novo aluno**:\n\n" +
+      "1️⃣ Navegue até **Acadêmico > Alunos**\n" +
+      "2️⃣ Clique no botão **+ Novo Aluno**\n" +
+      "3️⃣ Preencha os dados obrigatórios:\n" +
+      "   • Nome completo\n" +
+      "   • CPF\n" +
+      "   • Data de nascimento\n" +
+      "   • Unidade de ensino\n" +
+      "4️⃣ Campos adicionais: telefone, email, endereço, etc.\n" +
+      "5️⃣ Clique em **Salvar**\n\n" +
+      "📌 O sistema valida CPF automaticamente e verifica duplicidades.\n" +
+      "📌 É possível anexar documentos digitalizados na ficha do aluno.",
     link: "/alunos",
-    category: "modulo",
+    category: "tutorial",
   },
-
-  // ============================================================
-  // CURSOS
-  // ============================================================
   {
-    keywords: [
-      "curso", "cursos", "disciplina", "disciplinas", "matriz", "curricular",
-      "matrizes", "certificado", "diploma", "grade", "horária", "ementa",
-      "técnico", "tecnico", "graduação", "extensão", "extensao",
-    ],
-    title: "📚 Módulo de Cursos",
+    keywords: ["turma", "turmas", "calendário", "calendario", "aula", "disciplina"],
+    title: "📅 Gerenciamento de Turmas",
     message:
-      "O módulo de **Cursos** gerencia cursos técnicos, disciplinas e matrizes curriculares.\n\n**📍 Onde encontrar:** Menu lateral → Acadêmico → Cursos\n\n**Funcionalidades previstas:**\n⏳ Cadastro de cursos (técnico, graduação, extensão, qualificação)\n⏳ Matrizes curriculares\n⏳ Disciplinas e ementas\n⏳ Certificados e diplomas\n⏳ Grade horária\n\n**Status:** Em desenvolvimento 🚧\n\n💡 **Dica:** Enquanto o módulo não fica pronto, os dados podem ser cadastrados via administração do banco de dados.",
-    link: "/cursos",
-    category: "modulo",
-  },
-
-  // ============================================================
-  // TURMAS
-  // ============================================================
-  {
-    keywords: ["turma", "turmas", "calendário", "calendario", "diário", "diario", "professor", "alocar"],
-    title: "🏫 Módulo de Turmas",
-    message:
-      "O módulo de **Turmas** organiza as turmas, alocação de professores e calendário.\n\n**📍 Onde encontrar:** Menu lateral → Acadêmico → Turmas\n\n**Funcionalidades previstas:**\n⏳ Cadastro de turmas\n⏳ Alocação de professores\n⏳ Calendário acadêmico\n⏳ Diário eletrônico\n⏳ Acompanhamento pedagógico\n\n**Status:** Em desenvolvimento 🚧",
+      "O módulo de **Turmas** permite organizar as turmas e seus calendários:\n\n" +
+      "**Funcionalidades:**\n" +
+      "• 📋 Cadastro de turmas com professor, disciplina e horários\n" +
+      "• 📆 Calendário interativo com eventos da turma\n" +
+      "• 👥 Listagem de alunos matriculados por turma\n" +
+      "• 📊 Acompanhamento de frequência e notas\n\n" +
+      "**Dica:** Use o calendário visual para arrastar e agendar eventos!",
     link: "/turmas",
     category: "modulo",
   },
-
-  // ============================================================
-  // SECRETARIA
-  // ============================================================
   {
-    keywords: ["secretaria", "protocolo", "declaração", "declaracao", "certidão", "certidao", "documento", "assinatura"],
-    title: "📄 Secretaria Acadêmica",
+    keywords: ["biblioteca", "acervo", "livro", "livros", "emprestimo", "empréstimo"],
+    title: "📚 Biblioteca",
     message:
-      "O módulo de **Secretaria** gerencia protocolos, declarações e certidões.\n\n**📍 Onde encontrar:** Menu lateral → Acadêmico → Secretaria\n\n**Funcionalidades previstas:**\n⏳ Protocolo digital\n⏳ Declarações e certidões\n⏳ Históricos escolares\n⏳ Assinatura digital\n⏳ Automação de documentos\n\n**Status:** Em desenvolvimento 🚧",
-    link: "/secretaria",
+      "O módulo da **Biblioteca** gerencia todo o acervo e empréstimos:\n\n" +
+      "📖 **Acervo:** Cadastre livros com ISBN, autor, editora, ano e quantidade\n" +
+      "🔄 **Empréstimos:** Controle de retirada e devolução com prazos\n" +
+      "🔖 **Reservas:** Alunos podem reservar livros emprestados\n\n" +
+      "📌 **Regras de empréstimo:**\n" +
+      "• Prazo padrão: 14 dias\n" +
+      "• Renovação: até 2 vezes (se não houver reserva)\n" +
+      "• Multa por atraso: configurável por unidade\n\n" +
+      "⚠️ **Alerta:** O sistema notifica automaticamente sobre devoluções atrasadas!",
+    link: "/biblioteca/acervo",
     category: "modulo",
   },
-
   // ============================================================
-  // RECURSOS HUMANOS
-  // ============================================================
-  {
-    keywords: ["rh", "recursos humanos", "servidor", "servidores", "professor", "professores", "contrato", "férias", "ferias", "licença", "treinamento"],
-    title: "👥 Módulo de Recursos Humanos",
-    message:
-      "O módulo de **RH** gerencia servidores, professores, contratos e férias.\n\n**📍 Onde encontrar:** Menu lateral → Gestão → Recursos Humanos\n\n**Funcionalidades previstas:**\n⏳ Cadastro de servidores\n⏳ Professores e contratos\n⏳ Controle de férias e licenças\n⏳ Escalas de trabalho\n⏳ Treinamentos e avaliações\n\n**Status:** Planejado 📋",
-    link: "/rh",
-    category: "modulo",
-  },
-
-  // ============================================================
-  // FINANCEIRO
+  // MÓDULO GESTÃO
   // ============================================================
   {
-    keywords: ["financeiro", "receita", "despesa", "fluxo", "caixa", "empenho", "custo", "contrato", "pagamento"],
+    keywords: ["financeiro", "receita", "despesa", "fluxo", "caixa", "contas", "pagar", "receber"],
     title: "💰 Módulo Financeiro",
     message:
-      "O módulo **Financeiro** controla receitas, despesas, empenhos e fluxo de caixa.\n\n**📍 Onde encontrar:** Menu lateral → Gestão → Financeiro\n\n**Funcionalidades previstas:**\n⏳ Dashboard financeiro\n⏳ Receitas e despesas\n⏳ Empenhos e contratos\n⏳ Fluxo de caixa\n⏳ Centros de custo\n⏳ Prestação de contas\n\n**Status:** Planejado 📋",
-    link: "/financeiro",
+      "O **Financeiro** oferece controle completo das finanças:\n\n" +
+      "📊 **Dashboard Financeiro:**\n" +
+      "• Visão geral de receitas vs despesas\n" +
+      "• Gráficos de pizza por categoria\n" +
+      "• Saldo atual e projeções\n\n" +
+      "📥 **Receitas:** Cadastre entradas por categoria (matrículas, convênios, etc.)\n" +
+      "📤 **Despesas:** Controle gastos com categorização\n" +
+      "💳 **Fluxo de Caixa:** Acompanhe o fluxo mensal com previsões\n\n" +
+      "📌 **Dica:** Use categorias personalizadas para organizar melhor seus dados financeiros!",
+    link: "/financeiro/dashboard",
     category: "modulo",
   },
-
+  {
+    keywords: ["rh", "recursos humanos", "servidor", "servidores", "professor", "professores", "contrato", "ferias", "férias"],
+    title: "👥 Recursos Humanos",
+    message:
+      "O módulo de **RH** gerencia todo o quadro de funcionários:\n\n" +
+      "👤 **Servidores:** Cadastro completo com dados funcionais\n" +
+      "👨‍🏫 **Professores:** Gestão específica com titulação e regime\n" +
+      "📄 **Contratos:** Controle de contratos ativos e vencimentos\n" +
+      "🏖️ **Férias:** Solicitação e aprovação de períodos de férias\n\n" +
+      "📌 **Funcionalidades:**\n" +
+      "• Status ativo/inativo para servidores\n" +
+      "• Controle de carga horária\n" +
+      "• Histórico de férias por servidor\n" +
+      "• Filtros por unidade e regime de trabalho",
+    link: "/rh/servidores",
+    category: "modulo",
+  },
+  {
+    keywords: ["almoxarifado", "estoque", "item", "material", "entrada", "saída", "inventário"],
+    title: "📦 Almoxarifado",
+    message:
+      "Controle de **estoque e materiais**:\n\n" +
+      "📥 **Entradas:** Registre a chegada de novos materiais\n" +
+      "📤 **Saídas:** Controle a distribuição de materiais\n" +
+      "📊 **Inventário:** Visualize o saldo atual de todos os itens\n\n" +
+      "📌 **Boas práticas:**\n" +
+      "• Mantenha os itens categorizados (expediente, limpeza, informática, etc.)\n" +
+      "• Use o campo de observações para registrar dados da nota fiscal\n" +
+      "• O inventário atualiza automaticamente com entradas e saídas",
+    link: "/almoxarifado/entradas",
+    category: "modulo",
+  },
   // ============================================================
-  // COMPRAS
+  // MÓDULO AGENDA
   // ============================================================
   {
-    keywords: ["compra", "compras", "licitação", "licitacao", "cotação", "cotacao", "orçamento", "fornecedor"],
-    title: "🛒 Módulo de Compras e Licitações",
+    keywords: ["agenda", "evento", "eventos", "reunião", "reuniao", "palestra", "laboratório", "laboratorio", "laboratorios", "sala", "salas", "reserva", "calendário", "calendario", "agendamento", "formatura", "aula inaugural", "aula_inaugural", "oficina", "evento institucional", "confirmado", "realizado"],
+    title: "📅 Módulo Agenda",
     message:
-      "O módulo de **Compras** gerencia solicitações, cotações e licitações.\n\n**📍 Onde encontrar:** Menu lateral → Gestão → Compras\n\n**Funcionalidades previstas:**\n⏳ Solicitações de compra\n⏳ Cotações e orçamentos\n⏳ Licitações\n⏳ Contratos\n⏳ Recebimento de materiais\n\n**Status:** Planejado 📋",
-    link: "/compras",
+      "O módulo de **Agenda** gerencia a programação institucional:\n\n" +
+      "🎪 **Eventos:**\n" +
+      "• Cadastro de eventos com título, descrição e tipo\n" +
+      "• Tipos: reunião, evento institucional, aula inaugural, formatura, palestra, oficina\n" +
+      "• Definição de data/hora início e fim, local, responsável e público-alvo\n" +
+      "• Cores personalizadas para identificação visual\n" +
+      "• Status: agendado → confirmado → realizado / cancelado\n" +
+      "• Visualização em **lista** ou **calendário mensal** interativo\n" +
+      "• Destaque do dia atual no calendário\n\n" +
+      "🧪 **Laboratórios:**\n" +
+      "• Agendamento e gestão de laboratórios\n" +
+      "• Controle de disponibilidade por data e horário\n\n" +
+      "🚪 **Salas:**\n" +
+      "• Reserva de salas institucionais\n" +
+      "• Evita conflitos de horário entre reservas\n\n" +
+      "📌 **Dica:** Use a visualização mensal para ter uma visão panorâmica de todos os eventos do mês!",
+    link: "/agenda/eventos",
     category: "modulo",
   },
-
-  // ============================================================
-  // ALMOXARIFADO
-  // ============================================================
-  {
-    keywords: ["almoxarifado", "estoque", "entrada", "saída", "inventário", "inventario", "transferência", "código", "barras", "qrcode"],
-    title: "📦 Módulo de Almoxarifado",
-    message:
-      "O módulo de **Almoxarifado** gerencia estoque e inventário.\n\n**📍 Onde encontrar:** Menu lateral → Gestão → Almoxarifado\n\n**Funcionalidades previstas:**\n⏳ Controle de estoque\n⏳ Entradas e saídas\n⏳ Inventário físico\n⏳ Estoque mínimo\n⏳ Transferências entre unidades\n⏳ Código de barras e QR Code\n\n**Status:** Planejado 📋",
-    link: "/almoxarifado",
-    category: "modulo",
-  },
-
-  // ============================================================
-  // PATRIMÔNIO
-  // ============================================================
-  {
-    keywords: ["patrimônio", "patrimonio", "tombamento", "bem", "bens", "movimentação", "manutenção", "depreciação", "baixa"],
-    title: "🏢 Módulo de Patrimônio",
-    message:
-      "O módulo de **Patrimônio** gerencia tombamento e controle de bens.\n\n**📍 Onde encontrar:** Menu lateral → Gestão → Patrimônio\n\n**Funcionalidades previstas:**\n⏳ Tombamento de bens\n⏳ Movimentações\n⏳ Controle de manutenção\n⏳ Depreciação\n⏳ Baixa patrimonial\n⏳ Inventário físico\n\n**Status:** Planejado 📋",
-    link: "/patrimonio",
-    category: "modulo",
-  },
-
-  // ============================================================
-  // BIBLIOTECA
-  // ============================================================
-  {
-    keywords: ["biblioteca", "acervo", "livro", "empréstimo", "emprestimo", "reserva", "multa", "obra"],
-    title: "📖 Módulo de Biblioteca",
-    message:
-      "O módulo de **Biblioteca** gerencia acervo, empréstimos e reservas.\n\n**📍 Onde encontrar:** Menu lateral → Serviços → Biblioteca\n\n**Funcionalidades previstas:**\n⏳ Cadastro de acervo\n⏳ Empréstimos e devoluções\n⏳ Renovações online\n⏳ Reservas\n⏳ Controle de multas\n⏳ QR Code para obras\n\n**Status:** Planejado 📋",
-    link: "/biblioteca",
-    category: "modulo",
-  },
-
-  // ============================================================
-  // AGENDA
-  // ============================================================
-  {
-    keywords: ["agenda", "evento", "reunião", "sala", "laboratório", "calendário", "reserva", "compartilhado"],
-    title: "📅 Módulo de Agenda Institucional",
-    message:
-      "O módulo de **Agenda** gerencia eventos, reuniões e reservas.\n\n**📍 Onde encontrar:** Menu lateral → Serviços → Agenda\n\n**Funcionalidades previstas:**\n⏳ Eventos institucionais\n⏳ Reuniões agendadas\n⏳ Reserva de salas\n⏳ Reserva de laboratórios\n⏳ Calendário compartilhado\n\n**Status:** Planejado 📋",
-    link: "/agenda",
-    category: "modulo",
-  },
-
-  // ============================================================
-  // TI
-  // ============================================================
-  {
-    keywords: ["ti", "tecnologia", "informação", "chamado", "equipamento", "software", "licença", "suporte", "garantia"],
-    title: "💻 Módulo de TI",
-    message:
-      "O módulo de **TI** gerencia chamados técnicos e equipamentos.\n\n**📍 Onde encontrar:** Menu lateral → Serviços → TI\n\n**Funcionalidades previstas:**\n⏳ Abertura de chamados\n⏳ Inventário de equipamentos\n⏳ Licenças de software\n⏳ Controle de garantias\n⏳ Base de conhecimento\n\n**Status:** Planejado 📋",
-    link: "/ti",
-    category: "modulo",
-  },
-
-  // ============================================================
-  // OUVIDORIA
-  // ============================================================
-  {
-    keywords: ["ouvidoria", "reclamação", "reclamacao", "sugestão", "sugestao", "denúncia", "denuncia", "elogio", "manifestação", "anonimato"],
-    title: "🎤 Módulo de Ouvidoria",
-    message:
-      "O módulo de **Ouvidoria** é o canal de comunicação com a instituição.\n\n**📍 Onde encontrar:** Menu lateral → Serviços → Ouvidoria\n\n**Funcionalidades previstas:**\n⏳ Registro de manifestações\n⏳ Reclamações e denúncias\n⏳ Sugestões e elogios\n⏳ Acompanhamento de protocolos\n⏳ Relatórios gerenciais\n⏳ Anonimato garantido\n\n**Status:** Planejado 📋",
-    link: "/ouvidoria",
-    category: "modulo",
-  },
-
   // ============================================================
   // ADMINISTRAÇÃO
   // ============================================================
   {
-    keywords: [
-      "admin", "administração", "administracao", "usuário", "usuario", "usuários",
-      "perfil", "perfis", "permissão", "permissao", "permissões", "acesso",
-      "criar usuário", "novo usuário", "papel", "roles", "rbac",
-    ],
-    title: "👑 Administração do Sistema",
+    keywords: ["usuário", "usuarios", "criar", "cadastrar", "senha", "login", "acesso"],
+    title: "🔐 Gestão de Usuários",
     message:
-      "O módulo de **Administração** gerencia usuários, perfis e permissões.\n\n**📍 Onde encontrar:** Menu lateral → Administração\n\n**🔹 Usuários (/admin/usuarios):**\n✅ Lista completa com busca por nome/email\n✅ Criar usuário (define email, perfil de acesso, unidade)\n✅ Editar dados e perfil\n✅ Ativar/Desativar conta\n✅ Excluir usuário\n\n**🔹 Perfis (/admin/perfis):**\n✅ Lista em cards com nível (0-5)\n✅ Criar perfil (nome, código, descrição, nível)\n✅ Editar perfil\n✅ Excluir (exceto perfis do sistema 🔒)\n\n**Níveis de acesso:**\n0 - Básico | 1 - Operacional | 2 - Supervisor\n3 - Gerencial | 4 - Estratégico | 5 - Administrador\n\n**🔹 Permissões (/admin/permissoes):**\n✅ Matriz completa por módulo e ação\n✅ Ações: Listar | Criar | Editar | Excluir\n✅ Toggle visual (verde ✅ / cinza ❌)\n✅ Salvamento automático no banco\n\n**📋 Tutorial - Criar Usuário:**\n1. Vá em Administração > Usuários\n2. Clique em \"Novo Usuário\"\n3. Preencha nome completo e email\n4. Selecione o perfil de acesso\n5. Escolha a unidade (opcional)\n6. Clique em \"Criar usuário\"\n7. ✅ O usuário receberá um email para definir a senha\n\n**📋 Tutorial - Configurar Permissões:**\n1. Vá em Administração > Permissões\n2. Selecione um perfil no dropdown\n3. Ative as ações desejadas para cada módulo\n4. Clique em \"Salvar Permissões\"\n\n**💡 Dica:** Perfis com nível mais alto (ex: admin_geral) têm acesso a tudo. Configure permissões granulares para perfis operacionais!",
+      "Para **criar um novo usuário** no sistema:\n\n" +
+      "1️⃣ Acesse **Administração > Usuários**\n" +
+      "2️⃣ Clique em **+ Novo Usuário**\n" +
+      "3️⃣ Preencha:\n" +
+      "   • Nome completo e email\n" +
+      "   • CPF (opcional)\n" +
+      "   • Perfil de acesso (Admin, Gestor, Usuário, etc.)\n" +
+      "   • Unidade de vínculo\n" +
+      "4️⃣ Defina uma senha temporária\n" +
+      "5️⃣ Clique em **Salvar**\n\n" +
+      "📌 **Dica:** Vincule o usuário ao perfil correto para garantir as permissões adequadas.\n" +
+      "📌 Usuários podem redefinir a própria senha no perfil.",
     link: "/admin/usuarios",
+    category: "tutorial",
+  },
+  {
+    keywords: ["perfil", "perfis", "permissoes", "permissões", "acesso", "roles", "papeis"],
+    title: "🛡️ Perfis e Permissões",
+    message:
+      "O sistema possui um **controle de acesso baseado em perfis (RBAC)**:\n\n" +
+      "**Perfis disponíveis:**\n" +
+      "• 👑 **Administrador Total** — Acesso completo a tudo\n" +
+      "• 📊 **Gestor** — Acesso a gestão e relatórios\n" +
+      "• 👨‍🏫 **Professor** — Acesso acadêmico\n" +
+      "• 👤 **Usuário Padrão** — Acesso básico\n\n" +
+      "**Gerenciamento:**\n" +
+      "• Crie perfis personalizados em **Administração > Perfis**\n" +
+      "• Defina permissões específicas por módulo\n" +
+      "• Cada perfil pode ter permissões de: visualizar, criar, editar e excluir\n\n" +
+      "⚠️ Apenas Administradores podem gerenciar perfis e permissões!",
+    link: "/admin/perfis",
     category: "admin",
   },
-
   // ============================================================
-  // AUDITORIA
+  // MÓDULO COMPRAS
   // ============================================================
   {
-    keywords: ["auditoria", "log", "logs", "histórico", "historico", "rastreamento", "ip", "sessão", "sessao", "lgpd", "conformidade"],
-    title: "🛡️ Módulo de Auditoria",
+    keywords: ["compras", "cotação", "cotacoes", "cotar", "licitação", "licitações", "licitacao", "licitar", "solicitação de compra", "solicitacoes_compra", "solicitar", "fornecedor", "fornecedores", "orçamento", "orçar", "pregao", "pregão", "concorrência", "convite", "tomada de preços", "dispensa", "inexigibilidade", "aquisição"],
+    title: "🛒 Módulo de Compras",
     message:
-      "O módulo de **Auditoria** registra todas as ações do sistema.\n\n**📍 Onde encontrar:** Menu lateral → Sistema → Auditoria\n\n**Funcionalidades previstas:**\n⏳ Logs completos de auditoria\n⏳ Histórico de alterações\n⏳ Rastreamento de IP\n⏳ Controle de sessões\n⏳ Relatórios de auditoria\n⏳ Conformidade LGPD\n\n**Status:** Planejado 📋\n\n💡 A auditoria é fundamental para conformidade com a LGPD e para rastrear alterações em dados sensíveis.",
-    link: "/auditoria",
+      "O módulo de **Compras** gerencia todo o processo de aquisições:\n\n" +
+      "📋 **Solicitações de Compra:**\n" +
+      "• Cadastro de solicitações com solicitante, descrição e justificativa\n" +
+      "• Prioridades: baixa, média, alta e urgente\n" +
+      "• Status: rascunho → enviada → em análise → aprovada / rejeitada\n" +
+      "• Vinculação com a unidade solicitante\n\n" +
+      "📑 **Cotações:**\n" +
+      "• Registro de cotações de fornecedores\n" +
+      "• Dados: fornecedor, CNPJ, descrição dos itens, valor total\n" +
+      "• Datas: cotação e validade\n" +
+      "• Status: solicitada → recebida → aprovada / rejeitada / cancelada\n" +
+      "• Prazo de entrega e observações\n\n" +
+      "⚖️ **Licitações:**\n" +
+      "• Gestão completa de processos licitatórios\n" +
+      "• Modalidades: convite, tomada de preços, concorrência, pregão, dispensa e inexigibilidade\n" +
+      "• Número do processo, objeto, valor estimado\n" +
+      "• Datas de publicação e abertura\n" +
+      "• Status: planejada → publicada → em andamento → adjudicada / homologada / cancelada\n\n" +
+      "📌 **Dica:** Todas as compras são vinculadas a unidades, facilitando a prestação de contas!",
+    link: "/compras/solicitacoes",
     category: "modulo",
   },
-
   // ============================================================
-  // RELATÓRIOS
+  // MÓDULO PATRIMÔNIO
   // ============================================================
   {
-    keywords: ["relatório", "relatorio", "relatórios", "pdf", "excel", "csv", "exportar", "exportação"],
-    title: "📊 Módulo de Relatórios",
+    keywords: ["patrimônio", "patrimonio", "bem", "bens", "tombo", "movimentação", "manutenção"],
+    title: "🏛️ Módulo Patrimônio",
     message:
-      "O módulo de **Relatórios** gerará documentos em PDF, Excel e CSV.\n\n**📍 Onde encontrar:** Menu lateral → Inteligência → Relatórios\n\n**Funcionalidades previstas:**\n⏳ Relatórios acadêmicos\n⏳ Relatórios financeiros\n⏳ Exportação PDF/Excel/CSV\n⏳ Agendamento de relatórios\n⏳ Dashboards personalizados\n⏳ Relatórios LGPD\n\n**Status:** Planejado 📋\n\n💡 **Dica:** Enquanto não disponível, use os filtros e buscas nas listas para extrair informações!",
-    link: "/relatorios",
+      "Gerencie todos os **bens patrimoniais** da instituição:\n\n" +
+      "📋 **Bens:** Cadastre bens com:\n" +
+      "• Número de tombo único\n" +
+      "• Categoria (móveis, equipamentos, veículos, imóveis, informática)\n" +
+      "• Estado de conservação (novo, bom, regular, ruim, inservível)\n" +
+      "• Valor de aquisição e datas\n" +
+      "• Localização e responsável\n\n" +
+      "🔄 **Movimentações:** Registre:\n" +
+      "• Transferências entre setores\n" +
+      "• Empréstimos e devoluções\n" +
+      "• Baixas patrimoniais\n\n" +
+      "🔧 **Manutenções:** Solicite e acompanhe:\n" +
+      "• Manutenções preventivas, corretivas e urgentes\n" +
+      "• Status: solicitada → em andamento → concluída\n" +
+      "• Controle de custos",
+    link: "/patrimonio/bens",
     category: "modulo",
   },
-
   // ============================================================
-  // BANCO DE DADOS
+  // MÓDULO CURSOS
   // ============================================================
   {
-    keywords: [
-      "banco", "dados", "database", "tabela", "tabelas", "estrutura",
-      "schema", "supabase", "sql", "migration", "migração",
-    ],
-    title: "🗄️ Estrutura do Banco de Dados",
+    keywords: ["curso", "cursos", "disciplina", "disciplinas", "matriz curricular", "matriz-curricular", "grade curricular", "acadêmico", "academico", "técnico", "graduação", "pós-graduação", "extensão", "mestrado", "presencial", "ead", "hibrido", "semestral", "anual", "modular", "carga horária", "ementa"],
+    title: "🎓 Módulo de Cursos",
     message:
-      "O IDEP-Gestor utiliza **Supabase** (PostgreSQL) como banco de dados.\n\n**Principais tabelas:**\n\n**Core:**\n• unidades — Escolas/Filiais\n• perfis — Papéis/RBAC (admin_geral, diretor, professor, etc.)\n• permissoes — Permissões granulares por módulo/ação\n• usuarios — Perfis estendidos ligados ao auth.users\n• auditoria — Log completo de ações\n• configuracoes — Configurações institucionais\n\n**Acadêmico:**\n• alunos, cursos, disciplinas, turmas\n• matriculas, notas, frequencia, historico_escolar\n\n**Gestão:**\n• professores, servidores, contratos\n• receitas, despesas, centros_custo\n• itens, bens_patrimoniais\n• solicitacoes_compra, cotacoes, licitacoes\n\n**Serviços:**\n• obras (acervo), emprestimos, reservas\n• chamados_ti, equipamentos_ti\n• manifestacoes (ouvidoria)\n• processos, tramitacoes\n\n**Sistema:**\n• notificacoes — Notificações em tempo real\n• sessoes — Controle de sessões\n\n💡 Todas as tabelas têm RLS (Row Level Security) ativado!",
+      "O módulo de **Cursos** estrutura toda a oferta acadêmica:\n\n" +
+      "📘 **Cursos:**\n" +
+      "• Cadastro completo com nome, código e descrição\n" +
+      "• Tipos: técnico, graduação, pós-graduação, extensão e mestrado\n" +
+      "• Modalidades: presencial, EAD e híbrido\n" +
+      "• Regime: semestral, anual e modular\n" +
+      "• Carga horária total e duração estimada\n" +
+      "• Coordenação e unidade de vínculo\n" +
+      "• Ativação/desativação de cursos\n\n" +
+      "📚 **Disciplinas:**\n" +
+      "• Cadastro de disciplinas com nome, código e ementa\n" +
+      "• Carga horária teórica e prática\n" +
+      "• Semestre de oferta\n" +
+      "• Vinculação a cursos específicos\n\n" +
+      "📐 **Matriz Curricular:**\n" +
+      "• Associa disciplinas aos cursos de forma estruturada\n" +
+      "• Define em qual semestre/período cada disciplina é ofertada\n" +
+      "• Permite visualizar a grade completa do curso\n\n" +
+      "📌 **Dica:** A matriz curricular é essencial para organizar a progressão dos alunos ao longo do curso!",
+    link: "/cursos",
+    category: "modulo",
+  },
+  // ============================================================
+  // MÓDULO TI
+  // ============================================================
+  {
+    keywords: ["ti", "chamado", "chamados", "suporte", "equipamento", "informática"],
+    title: "💻 Módulo de TI",
+    message:
+      "O módulo de **TI** gerencia:\n\n" +
+      "🖥️ **Equipamentos:** Cadastro de equipamentos de informática\n" +
+      "🔧 **Chamados:** Abertura e acompanhamento de chamados de suporte\n" +
+      "📄 **Licenças:** Controle de licenças de software\n\n" +
+      "📌 **Abrir um chamado:**\n" +
+      "1️⃣ Acesse **Serviços > TI > Chamados**\n" +
+      "2️⃣ Clique em **+ Novo Chamado**\n" +
+      "3️⃣ Descreva o problema\n" +
+      "4️⃣ Acompanhe o status pela lista de chamados",
+    link: "/ti/chamados",
+    category: "modulo",
+  },
+  // ============================================================
+  // MÓDULO PROJETOS
+  // ============================================================
+  {
+    keywords: ["projeto", "projetos", "programa", "programas", "editais", "edital", "convênio", "convenio", "termo de execução", "coordenador", "financiamento", "ensino", "pesquisa", "extensão", "desenvolvimento institucional", "parceria", "resultados", "planejado", "em andamento", "concluído", "suspenso", "cancelado", "orçamento"],
+    title: "📋 Módulo de Projetos",
+    message:
+      "O módulo de **Projetos** gerencia iniciativas e programas institucionais:\n\n" +
+      "📌 **Cadastro de Projetos:**\n" +
+      "• Código único de identificação\n" +
+      "• Nome, descrição e objetivos\n" +
+      "• Tipos: ensino, pesquisa, extensão e desenvolvimento institucional\n" +
+      "• Datas de início e fim\n" +
+      "• Coordenador responsável\n" +
+      "• Valor do orçamento previsto\n\n" +
+      "📊 **Acompanhamento:**\n" +
+      "• Status: planejado → em andamento → concluído / suspenso / cancelado\n" +
+      "• Parcerias e instituições envolvidas\n" +
+      "• Resultados esperados e alcançados\n" +
+      "• Relatórios parciais e finais\n" +
+      "• Vinculação com unidades e equipe envolvida\n\n" +
+      "📌 **Dica:** Use o campo de observações para registrar marcos importantes e entregas do projeto!",
+    link: "/projetos",
+    category: "modulo",
+  },
+  // ============================================================
+  // OUVIDORIA
+  // ============================================================
+  {
+    keywords: ["ouvidoria", "sugestão", "sugestões", "reclamação", "manifestação", "relatório"],
+    title: "📢 Ouvidoria",
+    message:
+      "A **Ouvidoria** permite o registro de manifestações:\n\n" +
+      "📝 **Sugestões:** Envie ideias para melhoria da instituição\n" +
+      "📊 **Relatórios:** Acompanhe o status das manifestações\n\n" +
+      "**Tipos de manifestação:**\n" +
+      "• 👍 Elogio\n" +
+      "• 💡 Sugestão\n" +
+      "• ⚠️ Reclamação\n" +
+      "• ❓ Solicitação\n\n" +
+      "📌 Todas as manifestações recebem um protocolo de acompanhamento.",
+    link: "/ouvidoria/sugestoes",
+    category: "modulo",
+  },
+  // ============================================================
+  // SECRETARIA
+  // ============================================================
+  {
+    keywords: ["secretaria", "certidão", "certidoes", "declaração", "declaracoes", "documento"],
+    title: "📑 Secretaria",
+    message:
+      "A **Secretaria** emite documentos oficiais:\n\n" +
+      "📜 **Certidões:** Emissão de certidões acadêmicas\n" +
+      "📋 **Declarações:** Geração de declarações diversas\n\n" +
+      "📌 Os documentos são gerados automaticamente com os dados do sistema.",
+    link: "/secretaria/certidoes",
+    category: "modulo",
+  },
+  // ============================================================
+  // BI E RELATÓRIOS
+  // ============================================================
+  {
+    keywords: ["bi", "relatório", "relatorios", "dashboard", "gráfico", "indicador", "kpi"],
+    title: "📊 BI e Relatórios",
+    message:
+      "O módulo de **BI** oferece:\n\n" +
+      "📈 **Dashboard Principal:** Visão geral com indicadores-chave (KPIs)\n" +
+      "📊 **Relatórios:** Relatórios detalhados por módulo\n\n" +
+      "**Indicadores disponíveis:**\n" +
+      "• Total de alunos ativos\n" +
+      "• Professores em atividade\n" +
+      "• Turmas em andamento\n" +
+      "• Receitas vs Despesas\n" +
+      "• Itens em estoque\n\n" +
+      "📌 Os dados são atualizados em tempo real!",
+    link: "/dashboard",
+    category: "modulo",
+  },
+  // ============================================================
+  // DICAS GERAIS
+  // ============================================================
+  {
+    keywords: ["ajuda", "suporte", "contato", "socorro", "problema", "erro", "bug"],
+    title: "🆘 Precisa de Ajuda?",
+    message:
+      "Se você está com dificuldades:\n\n" +
+      "1️⃣ **Pesquise aqui mesmo!** — Pergunte sobre o módulo desejado\n" +
+      "2️⃣ **Busca Rápida (Ctrl+K)** — Encontre páginas e funcionalidades\n" +
+      "3️⃣ **Navegue pelos menus** — Explore as funcionalidades disponíveis\n\n" +
+      "📌 **Dica:** Tente perguntar com palavras-chave específicas!\n" +
+      "Exemplos:\n" +
+      "• \"Como cadastrar um aluno?\"\n" +
+      "• \"Onde fica o financeiro?\"\n" +
+      "• \"Gerenciar permissões\"\n" +
+      "• \"Relatórios disponíveis\"\n\n" +
+      "💬 Estou aqui para ajudar!",
     category: "geral",
   },
   {
-    keywords: ["autenticação", "auth", "login", "logar", "entrar", "sair", "logout", "senha", "email"],
-    title: "🔐 Autenticação e Login",
+    keywords: ["dica", "dicas", "otimização", "performance", "melhor prática", "produtividade"],
+    title: "💡 Dicas de Produtividade",
     message:
-      "O sistema usa **Supabase Auth** para autenticação.\n\n**Login:**\n• Entre com email institucional e senha\n• Ou use **Login com GitHub** (OAuth)\n\n**Recuperação de senha:**\n1. Clique em \"Esqueceu a senha?\" na tela de login\n2. Digite seu email\n3. Verifique sua caixa de entrada\n4. Siga o link para redefinir a senha\n\n**Cadastro:**\n• Clique em \"Solicitar cadastro\" na tela de login\n• Preencha nome, email e senha\n• Confirme seu email\n\n🔒 Sua sessão fica salva mesmo fechando o navegador.",
-    category: "geral",
-  },
-  {
-    keywords: ["perfil", "avatar", "minha conta", "dados", "alterar", "editar perfil"],
-    title: "👤 Perfil do Usuário",
-    message:
-      "Para acessar seu perfil, clique no seu avatar no canto superior direito.\n\n**Opções do menu:**\n• ⚙️ Configurações — Acessar configurações do sistema\n• 👤 Meu Perfil — Ver/editar dados pessoais\n• 🚪 Sair do Sistema — Encerrar a sessão\n\n💡 Futuramente você poderá alterar foto, senha e preferências diretamente pelo perfil!",
-    category: "geral",
-  },
-  {
-    keywords: ["responsivo", "mobile", "celular", "tablet", "adaptável", "ios", "android"],
-    title: "📱 Sistema Responsivo",
-    message:
-      "O IDEP-Gestor é totalmente **responsivo** e funciona em:\n\n**💻 Desktop (1024px+)** — Experiência completa com sidebar fixo\n**📱 Tablet (768px+)** — Sidebar recolhível\n**📱 Mobile (menos de 768px)** — Sidebar em overlay\n\nNo mobile, use o ícone **☰** (hambúrguer) no header para abrir o menu.",
+      "🎯 **Maximize sua produtividade no IDEP-Gestor:**\n\n" +
+      "🔍 **Busca Global (Ctrl+K)** — Acesse qualquer página em segundos\n" +
+      "💬 **Assistente Virtual (Ctrl+Espaço)** — Tire dúvidas sem sair da página\n" +
+      "📱 **Responsivo** — Acesse de qualquer dispositivo\n" +
+      "🌙 **Tema Escuro** — Ative nas configurações para mais conforto\n" +
+      "📋 **Navegação por Atalhos** — Use o menu recolhido para mais espaço\n\n" +
+      "💪 **Lembre-se:** Quanto mais você usar, mais rápido será!",
     category: "dica",
   },
   {
-    keywords: ["boas práticas", "boas praticas", "recomendação", "dicas", "performance", "segurança"],
-    title: "💡 Dicas e Boas Práticas",
+    keywords: ["tema", "escuro", "claro", "dark", "light", "modo", "aparência"],
+    title: "🎨 Temas do Sistema",
     message:
-      "**📌 Dicas importantes:**\n\n1️⃣ **Use Ctrl+K** para busca rápida em todos os módulos\n2️⃣ **Mantenha os dados atualizados** — Informações corretas geram relatórios precisos\n3️⃣ **Perfis de acesso** — Atribua o menor nível de privilégio necessário para cada função\n4️⃣ **Matrículas** — Sempre verifique a disponibilidade de vagas na turma antes de matricular\n5️⃣ **Notificações** — Fique de olho no sininho para alertas importantes\n6️⃣ **Auditoria** — Todas as alterações são registradas para conformidade LGPD\n7️⃣ **Unidades** — Use o seletor de unidades para filtrar dados por filial\n\n**⚠️ Evite:**\n❌ Compartilhar senhas\n❌ Deixar sessões abertas em computadores compartilhados\n❌ Cadastrar CPFs duplicados\n❌ Excluir registros sem antes verificar vínculos (matrículas, contratos)",
+      "O IDEP-Gestor suporta **tema claro e escuro**!\n\n" +
+      "🌙 **Tema Escuro:** Ideal para ambientes com pouca luz\n" +
+      "☀️ **Tema Claro:** Melhor para ambientes bem iluminados\n\n" +
+      "📌 **Como alternar:**\n" +
+      "• Clique no ícone de **sol/lua** no topo da página\n" +
+      "• A preferência é salva automaticamente\n\n" +
+      "💡 O tema escuro reduz o cansaço visual em uso prolongado!",
     category: "dica",
   },
   {
-    keywords: [
-      "problema", "erro", "erros", "bug", "não funciona", "nao funciona",
-      "travou", "lento", "carregando", "404", "página", "encontrada",
-    ],
-    title: "🔧 Solução de Problemas",
+    keywords: ["mobile", "celular", "tablet", "responsivo", "app", "aplicativo"],
+    title: "📱 Acesso Mobile",
     message:
-      "**Problemas comuns e soluções:**\n\n**❌ Página não encontrada (404)**\n• Verifique se o link está correto\n• O módulo pode estar em desenvolvimento\n• Navegue pelo menu lateral para encontrar a página\n\n**❌ Erro de autenticação**\n• Tente fazer logout e login novamente\n• Verifique se o email foi confirmado\n• Use \"Esqueceu a senha?\" para redefinir\n\n**❌ Sistema lento**\n• Feche abas não utilizadas do navegador\n• Verifique sua conexão com a internet\n• Tente recarregar a página (F5)\n\n**❌ Dados não aparecem**\n• Verifique os filtros na página\n• Tente limpar a busca\n• Clique no ícone 🔄 para recarregar\n\n**❌ Permissão negada**\n• Seu perfil pode não ter acesso ao módulo\n• Solicite ao administrador as permissões necessárias\n\n💡 **Precisa de mais ajuda?** Entre em contato com o suporte técnico!",
+      "O sistema é **totalmente responsivo** e funciona em:\n\n" +
+      "📱 **Celulares:** Navegação adaptada para telas pequenas\n" +
+      "📟 **Tablets:** Layout otimizado para tela média\n" +
+      "💻 **Desktop:** Experiência completa\n\n" +
+      "📌 **Dicas para mobile:**\n" +
+      "• Use o menu hamburguer para navegar\n" +
+      "• O assistente está sempre disponível\n" +
+      "• A busca global funciona normalmente\n\n" +
+      "Não é necessário instalar nenhum app — use o navegador!",
     category: "dica",
-  },
-  {
-    keywords: [
-      "private", "route", "rota", "protegida", "protegido", "não autenticado",
-      "nao autenticado", "redirecionar", "login page",
-    ],
-    title: "🔒 Rotas Protegidas",
-    message:
-      "O sistema possui **rotas protegidas** que exigem autenticação:\n\n**📍 Públicas (sem login):**\n• /auth/login — Tela de login\n• /auth/register — Cadastro\n• /auth/recover-password — Recuperar senha\n• /auth/update-password — Atualizar senha\n• /auth/callback — Callback OAuth\n\n**📍 Protegidas (requer login):**\n• /dashboard — Dashboard executivo\n• /alunos, /cursos, /turmas, etc. — Módulos\n• /admin/* — Administração\n• /notificacoes — Notificações\n• Todas as demais páginas\n\n💡 Se você tentar acessar uma rota protegida sem estar logado, será redirecionado automaticamente para o login!",
-    category: "geral",
   },
 ];
 
+import { processQuery } from "./nlp-engine";
+
 // ============================================================
-// Search function
+// Feedback storage key
 // ============================================================
-export function searchKnowledge(query: string): KnowledgeEntry[] {
-  const lowerQuery = query.toLowerCase().trim();
-  if (!lowerQuery) return [];
+const FEEDBACK_KEY = "idep-assistant-feedback-ratings";
 
-  const results: { entry: KnowledgeEntry; score: number }[] = [];
+interface StoredFeedback {
+  kbIndex: number;
+  vote: "up" | "down";
+}
 
-  for (const entry of KB) {
-    let score = 0;
+function loadFeedbackRatings(): StoredFeedback[] {
+  try {
+    const stored = localStorage.getItem(FEEDBACK_KEY);
+    return stored ? JSON.parse(stored) : [];
+  } catch { return []; }
+}
 
-    // Check each keyword
-    for (const keyword of entry.keywords) {
-      if (lowerQuery.includes(keyword)) {
-        score += 10;
-      }
-      if (keyword.includes(lowerQuery)) {
-        score += 5;
-      }
-    }
-
-    // Check in title and message content
-    if (entry.title.toLowerCase().includes(lowerQuery)) {
-      score += 8;
-    }
-    if (entry.message.toLowerCase().includes(lowerQuery)) {
-      // Count occurrences for richer matching
-      const matches = entry.message.toLowerCase().split(lowerQuery).length - 1;
-      score += matches * 2;
-    }
-
-    if (score > 0) {
-      results.push({ entry, score });
+/**
+ * Calcula score de feedback para cada entrada da KB
+ * Returns um mapa de kbIndex -> peso (ex: up=1.2, down=0.7, none=1.0)
+ */
+function getFeedbackWeights(): Map<number, number> {
+  const weights = new Map<number, number>();
+  const ratings = loadFeedbackRatings();
+  
+  // Conta votos por entrada
+  const upCount = new Map<number, number>();
+  const downCount = new Map<number, number>();
+  
+  for (const r of ratings) {
+    if (r.vote === "up") {
+      upCount.set(r.kbIndex, (upCount.get(r.kbIndex) || 0) + 1);
+    } else {
+      downCount.set(r.kbIndex, (downCount.get(r.kbIndex) || 0) + 1);
     }
   }
-
-  // Sort by relevance score (highest first)
-  results.sort((a, b) => b.score - a.score);
-
-  return results.slice(0, 3).map((r) => r.entry);
+  
+  // Calcula peso: mais ups = maior peso, mais downs = menor peso
+  const allIndices = new Set([...upCount.keys(), ...downCount.keys()]);
+  for (const idx of allIndices) {
+    const ups = upCount.get(idx) || 0;
+    const downs = downCount.get(idx) || 0;
+    const total = ups + downs;
+    if (total === 0) {
+      weights.set(idx, 1.0);
+    } else {
+      // Fórmula: peso varia de 0.5 (só down) a 1.5 (só up)
+      const ratio = ups / total;
+      // Votos suficientes? >=3 votos, usa peso completo
+      if (total >= 3) {
+        weights.set(idx, 0.5 + ratio);
+      } else {
+        // Poucos votos, peso mais conservador
+        weights.set(idx, 0.8 + ratio * 0.4);
+      }
+    }
+  }
+  
+  return weights;
 }
 
 // ============================================================
-// Get a response for a specific action
+// Search function - finds relevant knowledge entries
+// with feedback-based prioritization
 // ============================================================
-export function getActionResponse(
-  action: string
-): { title: string; message: string; link?: string } | null {
-  const actionMap: Record<string, string[]> = {
-    cadastrar_aluno: ["cadastrar", "aluno", "alunos"],
-    gerenciar_permissoes: ["permissão", "permissao", "permissões", "permissoes"],
-    criar_usuario: ["criar", "usuário", "usuario", "novo"],
-    modulo_financeiro: ["financeiro", "receita", "despesa", "fluxo"],
-    banco_dados: ["banco", "dados", "tabela", "estrutura", "database"],
-    ajuda_sistema: ["ajuda", "sistema", "dúvida", "duvida", "problema"],
-  };
+interface ScoredEntry {
+  entry: KnowledgeEntry;
+  score: number;
+  kbIndex: number;
+}
 
+export function searchKnowledge(query: string): KnowledgeEntry[] {
+  return searchKnowledgeWithFeedback(query).map((s) => s.entry);
+}
+
+/**
+ * Busca conhecimento retornando também o índice da KB e score
+ */
+export function searchKnowledgeWithFeedback(query: string): ScoredEntry[] {
+  // Carrega feedback weights
+  const feedbackWeights = getFeedbackWeights();
+  
+  // Usa NLP para expandir a consulta
+  const nlp = processQuery(query);
+  const searchQueries = [nlp.expanded, query, nlp.stemmed.join(" ")];
+
+  let bestResults: ScoredEntry[] = [];
+
+  for (const searchQuery of searchQueries) {
+    // Ignora palavras de 1 caractere para evitar falsos positivos (ex: "o" casa com "aluno", "projeto", etc.)
+    const words = searchQuery.toLowerCase().split(/\s+/).filter(Boolean).filter((w) => w.length > 1);
+
+    const scored: ScoredEntry[] = KB.map((entry, index) => {
+      let score = 0;
+      const allKeywords = entry.keywords.map((k) => k.toLowerCase());
+
+      for (const word of words) {
+        for (const keyword of allKeywords) {
+          if (keyword === word) {
+            score += 3;
+          } else if (keyword.includes(word)) {
+            score += 2;
+          } else if (word.includes(keyword)) {
+            score += 1;
+          }
+        }
+
+        if (entry.title.toLowerCase().includes(word)) score += 1.5;
+        if (entry.message.toLowerCase().includes(word)) score += 0.5;
+      }
+
+      // Aplica peso do feedback (multiplica score)
+      const weight = feedbackWeights.get(index);
+      if (weight !== undefined) {
+        score = Math.round(score * weight);
+      }
+
+      return { entry, score, kbIndex: index };
+    });
+
+    const results = scored.filter((s) => s.score > 0);
+    if (results.length > bestResults.length) {
+      bestResults = results;
+    }
+
+    if (bestResults.length > 0) break;
+  }
+
+  return bestResults
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 5);
+}
+
+// ============================================================
+// Action response function - triggers specific actions
+// ============================================================
+const actionMap: Record<string, string[]> = {
+  cadastrar_aluno: ["cadastrar aluno", "novo aluno", "matricular"],
+  gerenciar_permissoes: ["permissão", "perfil", "acesso", "role"],
+  criar_usuario: ["criar usuário", "novo usuário", "cadastrar usuário"],
+  ajuda_sistema: ["dica", "ajuda", "socorro", "produtividade"],
+  modulo_financeiro: ["financeiro", "receita", "despesa", "fluxo de caixa"],
+  banco_dados: ["banco de dados", "estrutura", "supabase", "tabela"],
+  modulo_patrimonio: ["patrimônio", "bem", "tombo", "movimentação"],
+  modulo_rh: ["rh", "servidor", "professor", "funcionário", "contrato"],
+  modulo_biblioteca: ["biblioteca", "livro", "acervo", "empréstimo"],
+  modulo_almoxarifado: ["almoxarifado", "estoque", "material", "entrada", "saída"],
+};
+
+export function getActionResponse(action: string): { title: string; message: string; link?: string } | null {
   const keywords = actionMap[action];
   if (!keywords) return null;
 
   for (const kw of keywords) {
     const results = searchKnowledge(kw);
     if (results.length > 0) {
-      const r = results[0];
+      const r = results[0] as NonNullable<typeof results[0]>;
       return { title: r.title, message: r.message, link: r.link };
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Versão do getActionResponse que também retorna o kbIndex para feedback
+ */
+export function getActionResponseWithFeedback(action: string): { title: string; message: string; link?: string; kbIndex: number } | null {
+  const keywords = actionMap[action];
+  if (!keywords) return null;
+
+  for (const kw of keywords) {
+    const results = searchKnowledgeWithFeedback(kw);
+    if (results.length > 0) {
+      const r = results[0] as NonNullable<typeof results[0]>;
+      return { title: r.entry.title, message: r.entry.message, link: r.entry.link, kbIndex: r.kbIndex };
     }
   }
 

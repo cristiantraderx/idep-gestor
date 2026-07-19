@@ -17,16 +17,20 @@ export default defineConfig({
     host: true,
   },
   build: {
+    chunkSizeWarningLimit: 500,
     rollupOptions: {
       output: {
         manualChunks: {
-          vendor: ["react", "react-dom", "react-router-dom"],
-          ui: [
-            "lucide-react",
-            "framer-motion",
-            "recharts",
-            "@tanstack/react-query",
+          vendor: [
+            "react",
+            "react-dom",
+            "react-router-dom",
+            "@supabase/supabase-js",
           ],
+          motion: ["framer-motion"],
+          icons: ["lucide-react"],
+          charts: ["recharts"],
+          query: ["@tanstack/react-query"],
           forms: ["react-hook-form", "@hookform/resolvers", "zod"],
         },
       },

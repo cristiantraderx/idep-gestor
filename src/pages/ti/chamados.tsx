@@ -11,7 +11,6 @@ import {
   CalendarDays,
   AlertTriangle,
   CheckCircle2,
-  Clock,
   ArrowUp,
 } from "lucide-react";
 import { motion } from "framer-motion";
@@ -109,9 +108,9 @@ export function ChamadosPage() {
 
       if (chamadosRes.data) {
         setChamados(
-          (chamadosRes.data as any[]).map((c) => ({
+          (chamadosRes.data as Record<string, unknown>[]).map((c: Record<string, unknown>) => ({
             ...c,
-            unidade_nome: c.unidades?.nome || "Não definida",
+            unidade_nome: (c.unidades as Record<string, unknown> | undefined)?.nome as string || "Não definida",
           }))
         );
       }
@@ -123,7 +122,7 @@ export function ChamadosPage() {
     }
   }, []);
 
-  useEffect(() => { fetchData(); }, [fetchData]);
+  useEffect(() => { let c = false; queueMicrotask(() => { if (!c) fetchData(); }); return () => { c = true; }; }, [fetchData]);
 
   const unidadeOptions = unidades.map((u) => ({ value: u.id, label: `${u.nome} (${u.sigla})` }));
 
@@ -178,7 +177,7 @@ export function ChamadosPage() {
       }
       setModalOpen(false);
       fetchData();
-    } catch (err: any) { setFormError(err.message || "Erro ao salvar chamado");
+    } catch (err: unknown) { setFormError(err instanceof Error ? err.message : "Erro ao salvar chamado");
     } finally { setSaving(false); }
   };
 

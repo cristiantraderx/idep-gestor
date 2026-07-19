@@ -19,12 +19,10 @@ import {
   Shield,
   BarChart3,
   PieChart,
-  FolderOpen,
   UserCheck,
   BookMarked,
   ShieldCheck,
   KeyRound,
-  type LucideIcon,
 } from "lucide-react";
 import type { NavEntry } from "@/types/navigation";
 

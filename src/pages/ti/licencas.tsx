@@ -9,9 +9,6 @@ import {
   RefreshCw,
   CalendarDays,
   Users,
-  DollarSign,
-  AlertTriangle,
-  CheckCircle2,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
@@ -23,7 +20,7 @@ import { Dialog, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { cn, formatFullDate } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 const TIPO_LIC_OPTIONS = [
   { value: "proprietario", label: "Proprietário" },
@@ -70,13 +67,13 @@ export function LicencasPage() {
         supabase.from("licencas_software").select("*, unidades(nome, sigla)").order("created_at", { ascending: false }),
         supabase.from("unidades").select("*").eq("ativo", true).order("nome"),
       ]);
-      if (licRes.data) setLicencas((licRes.data as any[]).map((l) => ({ ...l, unidade_nome: l.unidades?.nome || "Não definida" })));
+      if (licRes.data) setLicencas((licRes.data as Record<string, unknown>[]).map((l: Record<string, unknown>) => ({ ...l, unidade_nome: (l.unidades as Record<string, unknown> | undefined)?.nome as string || "Não definida" })));
       if (unidRes.data) setUnidades(unidRes.data);
     } catch (err) { console.error(err);
     } finally { setLoading(false); }
   }, []);
 
-  useEffect(() => { fetchData(); }, [fetchData]);
+  useEffect(() => { let c = false; queueMicrotask(() => { if (!c) fetchData(); }); return () => { c = true; }; }, [fetchData]);
 
   const unidadeOptions = unidades.map((u) => ({ value: u.id, label: `${u.nome} (${u.sigla})` }));
 
@@ -114,7 +111,7 @@ export function LicencasPage() {
       if (editing) { const { error } = await supabase.from("licencas_software").update(payload).eq("id", editing.id); if (error) { setFormError(error.message); return; } }
       else { const { error } = await supabase.from("licencas_software").insert(payload); if (error) { setFormError(error.message); return; } }
       setModalOpen(false); fetchData();
-    } catch (err: any) { setFormError(err.message || "Erro");
+    } catch (err: unknown) { setFormError(err instanceof Error ? err.message : "Erro");
     } finally { setSaving(false); }
   };
 

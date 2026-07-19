@@ -16,6 +16,20 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { formatFullDate } from "@/lib/utils";
 
+interface LogEntry {
+  id: string;
+  acao: string;
+  modulo: string;
+  usuario_nome: string;
+  usuario_id?: string;
+  ip?: string;
+  created_at: string;
+  registro_id?: string;
+  dados_antigos?: unknown;
+  dados_novos?: unknown;
+  usuarios?: { nome: string };
+}
+
 const MODULOS = [
   "Todos", "dashboard", "alunos", "cursos", "turmas", "secretaria", "rh", "financeiro",
   "compras", "almoxarifado", "patrimonio", "biblioteca", "ti", "ouvidoria", "agenda",
@@ -23,7 +37,7 @@ const MODULOS = [
 ];
 
 export function AuditoriaPage() {
-  const [logs, setLogs] = useState<any[]>([]);
+  const [logs, setLogs] = useState<LogEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [moduloFilter, setModuloFilter] = useState("Todos");
@@ -42,7 +56,7 @@ export function AuditoriaPage() {
       ]);
 
       if (logRes.data) {
-        setLogs((logRes.data as any[]).map((l) => ({
+        setLogs((logRes.data as LogEntry[]).map((l: LogEntry) => ({
           ...l,
           usuario_nome: l.usuarios?.nome || "Sistema",
         })));
@@ -50,9 +64,9 @@ export function AuditoriaPage() {
 
       // Get unique users count
       const { data: userData } = await supabase.from("auditoria").select("usuario_id");
-      const uniqueUsers = new Set((userData || []).map((u: any) => u.usuario_id).filter(Boolean));
+      const uniqueUsers = new Set((userData || []).map((u: LogEntry) => u.usuario_id).filter(Boolean));
       const { data: modData } = await supabase.from("auditoria").select("modulo");
-      const uniqueModules = new Set((modData || []).map((m: any) => m.modulo));
+      const uniqueModules = new Set((modData || []).map((m: LogEntry) => m.modulo));
 
       setStats({
         total: countRes.count || 0,
@@ -65,9 +79,7 @@ export function AuditoriaPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
-
-  useEffect(() => { fetchData(); }, [fetchData]);
+  }, []);  useEffect(() => { let c = false; queueMicrotask(() => { if (!c) fetchData(); }); return () => { c = true; }; }, [fetchData]);
 
   const filtered = logs.filter((l) => {
     const matchSearch = search === "" ||

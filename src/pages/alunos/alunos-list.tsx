@@ -81,7 +81,7 @@ export function AlunosListPage() {
 
   // Detail modal
   const [detailAluno, setDetailAluno] = useState<(Aluno & { unidade_nome?: string }) | null>(null);
-  const [matriculasAluno, setMatriculasAluno] = useState<any[]>([]);
+  const [matriculasAluno, setMatriculasAluno] = useState<Record<string, unknown>[]>([]);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -96,23 +96,21 @@ export function AlunosListPage() {
 
       if (alunosRes.data) {
         setAlunos(
-          (alunosRes.data as any[]).map((a) => ({
+          (alunosRes.data as Record<string, unknown>[]).map((a: Record<string, unknown>) => ({
             ...a,
-            unidade_nome: a.unidades?.nome || "Não definida",
+            unidade_nome: (a.unidades as Record<string, unknown> | undefined)?.nome as string || "Não definida",
           }))
         );
       }
       if (unidadesRes.data) setUnidades(unidadesRes.data);
-    } catch (err) {
+    } catch (err: unknown) {
       console.error("Erro ao carregar alunos:", err);
     } finally {
       setLoading(false);
     }
   }, []);
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+  useEffect(() => { let c = false; queueMicrotask(() => { if (!c) fetchData(); }); return () => { c = true; }; }, [fetchData]);
 
   const unidadeOptions = unidades.map((u) => ({ value: u.id, label: `${u.nome} (${u.sigla})` }));
 
@@ -170,7 +168,7 @@ export function AlunosListPage() {
       .eq("aluno_id", aluno.id)
       .order("created_at", { ascending: false });
 
-    if (data) setMatriculasAluno(data as any[]);
+    if (data) setMatriculasAluno(data as Record<string, unknown>[]);
   };
 
   const handleSave = async () => {
@@ -233,8 +231,8 @@ export function AlunosListPage() {
 
       setModalOpen(false);
       fetchData();
-    } catch (err: any) {
-      setFormError(err.message || "Erro ao salvar aluno");
+    } catch (err: unknown) {
+      setFormError(err instanceof Error ? err.message : "Erro ao salvar aluno");
     } finally {
       setSaving(false);
     }

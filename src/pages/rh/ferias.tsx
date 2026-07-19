@@ -66,14 +66,14 @@ export function FeriasPage() {
         supabase.from("servidores").select("*").eq("ativo", true).order("nome"),
         supabase.from("unidades").select("*").eq("ativo", true).order("nome"),
       ]);
-      if (feriasRes.data) setFerias((feriasRes.data as any[]).map((f) => ({ ...f, servidor_nome: f.servidores?.nome || "Servidor não encontrado", unidade_nome: f.unidades?.nome || "Não definida" })));
+      if (feriasRes.data) setFerias((feriasRes.data as Record<string, unknown>[]).map((f: Record<string, unknown>) => ({ ...f, servidor_nome: (f.servidores as Record<string, unknown> | undefined)?.nome as string || "Servidor não encontrado", unidade_nome: (f.unidades as Record<string, unknown> | undefined)?.nome as string || "Não definida" })));
       if (servRes.data) setServidores(servRes.data);
       if (unidRes.data) setUnidades(unidRes.data);
     } catch (err) { console.error(err);
     } finally { setLoading(false); }
   }, []);
 
-  useEffect(() => { fetchData(); }, [fetchData]);
+  useEffect(() => { let c = false; queueMicrotask(() => { if (!c) fetchData(); }); return () => { c = true; }; }, [fetchData]);
 
   const servidorOptions = servidores.map((s) => ({ value: s.id, label: s.nome }));
   const unidadeOptions = unidades.map((u) => ({ value: u.id, label: `${u.nome} (${u.sigla})` }));
@@ -87,8 +87,8 @@ export function FeriasPage() {
   const openEdit = (f: Ferias) => {
     setEditing(f);
     setFormData({
-      servidor_id: f.servidor_id, data_inicio: f.data_inicio.split("T")[0],
-      data_fim: f.data_fim.split("T")[0], dias: f.dias.toString(), periodo: f.periodo,
+      servidor_id: f.servidor_id, data_inicio: f.data_inicio!.split("T")[0]!,
+      data_fim: f.data_fim!.split("T")[0]!, dias: f.dias.toString(), periodo: f.periodo,
       ano_referencia: f.ano_referencia.toString(), status: f.status,
       observacoes: f.observacoes || "", aprovado_por: f.aprovado_por || "", unidade_id: f.unidade_id,
     });
@@ -112,7 +112,7 @@ export function FeriasPage() {
       if (editing) { const { error } = await supabase.from("ferias").update(payload).eq("id", editing.id); if (error) { setFormError(error.message); return; } }
       else { const { error } = await supabase.from("ferias").insert(payload); if (error) { setFormError(error.message); return; } }
       setModalOpen(false); fetchData();
-    } catch (err: any) { setFormError(err.message || "Erro");
+    } catch (err: unknown) { setFormError(err instanceof Error ? err.message : "Erro");
     } finally { setSaving(false); }
   };
 

@@ -8,9 +8,6 @@ import {
   Trash2,
   RefreshCw,
   CalendarDays,
-  Building2,
-  Wrench,
-  Package,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
@@ -49,10 +46,10 @@ const statusVariant: Record<string, "success" | "warning" | "default" | "destruc
   baixado: "destructive",
 };
 
-const tipoIcons: Record<string, typeof Monitor> = {
+const _tipoIcons: Record<string, typeof Monitor> = {
   desktop: Monitor, notebook: Monitor, servidor: Monitor,
-  impressora: Wrench, monitor: Monitor, rede: Package,
-  periferico: Package, outros: Package,
+  impressora: Monitor, monitor: Monitor, rede: Monitor,
+  periferico: Monitor, outros: Monitor,
 };
 
 export function EquipamentosPage() {
@@ -83,13 +80,13 @@ export function EquipamentosPage() {
         supabase.from("equipamentos_ti").select("*, unidades(nome, sigla)").order("created_at", { ascending: false }),
         supabase.from("unidades").select("*").eq("ativo", true).order("nome"),
       ]);
-      if (equipRes.data) setEquipamentos((equipRes.data as any[]).map((e) => ({ ...e, unidade_nome: e.unidades?.nome || "Não definida" })));
+      if (equipRes.data) setEquipamentos((equipRes.data as Record<string, unknown>[]).map((e: Record<string, unknown>) => ({ ...e, unidade_nome: (e.unidades as Record<string, unknown> | undefined)?.nome as string || "Não definida" })));
       if (unidRes.data) setUnidades(unidRes.data);
     } catch (err) { console.error(err);
     } finally { setLoading(false); }
   }, []);
 
-  useEffect(() => { fetchData(); }, [fetchData]);
+  useEffect(() => { let c = false; queueMicrotask(() => { if (!c) fetchData(); }); return () => { c = true; }; }, [fetchData]);
 
   const unidadeOptions = unidades.map((u) => ({ value: u.id, label: `${u.nome} (${u.sigla})` }));
 
@@ -122,7 +119,7 @@ export function EquipamentosPage() {
       if (editing) { const { error } = await supabase.from("equipamentos_ti").update(payload).eq("id", editing.id); if (error) { setFormError(error.message); return; } }
       else { const { error } = await supabase.from("equipamentos_ti").insert(payload); if (error) { setFormError(error.message); return; } }
       setModalOpen(false); fetchData();
-    } catch (err: any) { setFormError(err.message || "Erro");
+    } catch (err: unknown) { setFormError(err instanceof Error ? err.message : "Erro");
     } finally { setSaving(false); }
   };
 

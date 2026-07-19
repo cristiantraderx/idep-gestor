@@ -62,9 +62,9 @@ export function DisciplinasPage() {
 
       if (discRes.data) {
         setDisciplinas(
-          (discRes.data as any[]).map((d) => ({
+          (discRes.data as Record<string, unknown>[]).map((d: Record<string, unknown>) => ({
             ...d,
-            curso_nome: d.cursos?.nome || "Curso não encontrado",
+            curso_nome: (d.cursos as Record<string, unknown> | undefined)?.nome as string || "Curso não encontrado",
           }))
         );
       }
@@ -76,9 +76,7 @@ export function DisciplinasPage() {
     }
   }, []);
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+  useEffect(() => { let c = false; queueMicrotask(() => { if (!c) fetchData(); }); return () => { c = true; }; }, [fetchData]);
 
   const cursoOptions = cursos.map((c) => ({ value: c.id, label: c.nome }));
 
@@ -148,8 +146,8 @@ export function DisciplinasPage() {
 
       setModalOpen(false);
       fetchData();
-    } catch (err: any) {
-      setFormError(err.message || "Erro ao salvar disciplina");
+    } catch (err: unknown) {
+      setFormError(err instanceof Error ? err.message : "Erro ao salvar disciplina");
     } finally {
       setSaving(false);
     }

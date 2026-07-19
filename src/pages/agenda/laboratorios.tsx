@@ -16,7 +16,7 @@ import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import type { Unidade } from "@/integrations/supabase/types";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -60,14 +60,14 @@ const tipoColors: Record<string, string> = {
 };
 
 export function LaboratoriosPage() {
-  const [labs, setLabs] = useState<any[]>([]);
+  const [labs, setLabs] = useState<Array<Record<string, unknown>>>([]);
   const [unidades, setUnidades] = useState<Unidade[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [tipoFilter, setTipoFilter] = useState<string>("todos");
 
   const [modalOpen, setModalOpen] = useState(false);
-  const [editing, setEditing] = useState<any>(null);
+  const [editing, setEditing] = useState<Record<string, unknown> | null>(null);
   const [formData, setFormData] = useState({
     nome: "", codigo: "", capacidade: "20", tipo: "informatica",
     equipamentos: "", softwares: "", localizacao: "", responsavel: "",
@@ -85,14 +85,12 @@ export function LaboratoriosPage() {
         supabase.from("unidades").select("*").eq("ativo", true).order("nome"),
       ]);
       if (labRes.data) {
-        setLabs((labRes.data as any[]).map((l) => ({ ...l, unidade_nome: l.unidades?.nome || "Não definida" })));
+        setLabs((labRes.data as Array<Record<string, unknown>>).map((l) => ({ ...l, unidade_nome: (l.unidades as Record<string, unknown> | null)?.nome || "Não definida" })));
       }
       if (unidRes.data) setUnidades(unidRes.data);
     } catch (err) { console.error("Erro ao carregar laboratórios:", err); }
     finally { setLoading(false); }
-  }, []);
-
-  useEffect(() => { fetchData(); }, [fetchData]);
+  }, []);  useEffect(() => { let c = false; queueMicrotask(() => { if (!c) fetchData(); }); return () => { c = true; }; }, [fetchData]);
 
   const unidadeOptions = unidades.map((u) => ({ value: u.id, label: `${u.nome} (${u.sigla})` }));
 
@@ -105,7 +103,7 @@ export function LaboratoriosPage() {
     setFormError(""); setModalOpen(true);
   };
 
-  const openEditModal = (lab: any) => {
+  const openEditModal = (lab: Record<string, unknown>) => {
     setEditing(lab);
     setFormData({
       nome: lab.nome, codigo: lab.codigo || "", capacidade: lab.capacidade?.toString() || "20",
@@ -137,7 +135,7 @@ export function LaboratoriosPage() {
         if (error) { setFormError(error.message); return; }
       }
       setModalOpen(false); fetchData();
-    } catch (err: any) { setFormError(err.message || "Erro ao salvar"); }
+    } catch (err: unknown) { setFormError(err instanceof Error ? err.message : "Erro ao salvar"); }
     finally { setSaving(false); }
   };
 

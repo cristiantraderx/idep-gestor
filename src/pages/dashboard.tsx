@@ -1,14 +1,8 @@
 import { useState } from "react";
 import {
-  Users,
-  GraduationCap,
-  BookOpen,
-  DollarSign,
   TrendingUp,
   TrendingDown,
   Clock,
-  AlertCircle,
-  CheckCircle2,
   Building2,
 } from "lucide-react";
 import {
@@ -20,85 +14,12 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { KpiDetailModal } from "@/components/dashboard/kpi-detail-modal";
-
-const kpiCards = [
-  {
-    id: "alunos",
-    title: "Total de Alunos",
-    value: "1.247",
-    change: "+12%",
-    trend: "up",
-    icon: Users,
-    color: "text-blue-600 bg-blue-50 dark:bg-blue-950/50",
-  },
-  {
-    id: "professores",
-    title: "Professores Ativos",
-    value: "89",
-    change: "+3%",
-    trend: "up",
-    icon: GraduationCap,
-    color: "text-emerald-600 bg-emerald-50 dark:bg-emerald-950/50",
-  },
-  {
-    id: "cursos",
-    title: "Cursos Ativos",
-    value: "24",
-    change: "0%",
-    trend: "neutral",
-    icon: BookOpen,
-    color: "text-violet-600 bg-violet-50 dark:bg-violet-950/50",
-  },
-  {
-    id: "receita",
-    title: "Receita Mensal",
-    value: "R$ 1.2M",
-    change: "+8%",
-    trend: "up",
-    icon: DollarSign,
-    color: "text-amber-600 bg-amber-50 dark:bg-amber-950/50",
-  },
-];
-
-const statsGrid = [
-  { label: "Frequência Média", value: "87%", variant: "success" as const },
-  { label: "Salas Ocupadas", value: "32/45", variant: "default" as const },
-  { label: "Contratos Vigentes", value: "156", variant: "success" as const },
-  { label: "Estoque Baixo", value: "12", variant: "destructive" as const },
-  { label: "Chamados Abertos", value: "8", variant: "warning" as const },
-  { label: "Protocolos Pendentes", value: "23", variant: "warning" as const },
-];
-
-const recentActivities = [
-  {
-    icon: Users,
-    title: "Nova matrícula",
-    description: "Ana Silva - Técnico em Enfermagem",
-    time: "5 min atrás",
-    color: "text-blue-600",
-  },
-  {
-    icon: DollarSign,
-    title: "Pagamento recebido",
-    description: "Parcela #458 - R$ 1.200,00",
-    time: "15 min atrás",
-    color: "text-emerald-600",
-  },
-  {
-    icon: AlertCircle,
-    title: "Chamado aberto",
-    description: "Laboratório de Informática - Equipamento com defeito",
-    time: "1 hora atrás",
-    color: "text-amber-600",
-  },
-  {
-    icon: CheckCircle2,
-    title: "Protocolo concluído",
-    description: "Solicitação de declaração #892",
-    time: "2 horas atrás",
-    color: "text-violet-600",
-  },
-];
+import {
+  kpiCards,
+  statsGrid,
+  recentActivities,
+  unitComparison,
+} from "@/data/mock-data";
 
 export function DashboardPage() {
   const [selectedKpi, setSelectedKpi] = useState<string | null>(null);
@@ -282,29 +203,7 @@ export function DashboardPage() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            {[
-              {
-                name: "Unidade Sede",
-                alunos: 587,
-                professores: 38,
-                cursos: 10,
-                receita: "R$ 580K",
-              },
-              {
-                name: "Filial 01",
-                alunos: 389,
-                professores: 28,
-                cursos: 8,
-                receita: "R$ 390K",
-              },
-              {
-                name: "Filial 02",
-                alunos: 271,
-                professores: 23,
-                cursos: 6,
-                receita: "R$ 270K",
-              },
-            ].map((unit, index) => (
+            {unitComparison.map((unit, index) => (
               <div
                 key={index}
                 className="rounded-lg border border-border bg-muted/30 p-4 space-y-3"

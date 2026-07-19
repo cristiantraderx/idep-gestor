@@ -74,10 +74,10 @@ export function AdminUsuariosPage() {
 
       if (usuariosRes.data) {
         setUsuarios(
-          (usuariosRes.data as any[]).map((u) => ({
+          (usuariosRes.data as Record<string, unknown>[]).map((u: Record<string, unknown>) => ({
             ...u,
-            perfil_nome: u.perfis?.nome || "Sem perfil",
-            unidade_nome: u.unidades?.nome || "Não definida",
+            perfil_nome: (u.perfis as Record<string, unknown> | undefined)?.nome as string || "Sem perfil",
+            unidade_nome: (u.unidades as Record<string, unknown> | undefined)?.nome as string || "Não definida",
           }))
         );
       }
@@ -90,9 +90,7 @@ export function AdminUsuariosPage() {
     }
   }, []);
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+  useEffect(() => { let c = false; queueMicrotask(() => { if (!c) fetchData(); }); return () => { c = true; }; }, [fetchData]);
 
   const openCreateModal = () => {
     setEditingUser(null);
@@ -179,8 +177,8 @@ export function AdminUsuariosPage() {
 
       setModalOpen(false);
       fetchData();
-    } catch (err: any) {
-      setFormError(err.message || "Erro ao salvar usuário");
+    } catch (err: unknown) {
+      setFormError(err instanceof Error ? err.message : "Erro ao salvar usuário");
     } finally {
       setSaving(false);
     }
