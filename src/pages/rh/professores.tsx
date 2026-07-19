@@ -9,6 +9,7 @@ import {
   RefreshCw,
   Mail,
   Award,
+  Clock,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";

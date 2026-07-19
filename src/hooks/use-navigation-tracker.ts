@@ -60,10 +60,11 @@ function extractModuleSlug(pathname: string): { slug: string; name: string; labe
   // Admin sub-routes: /admin/usuarios → slug = admin, path = admin/usuarios
   if (parts[0] === "admin" && parts[1]) {
     const info = MODULE_NAMES["admin"];
+    if (!info) return null;
     return { slug: `admin/${parts[1]}`, name: info.name, label: info.label };
   }
 
-  const slug = parts[0];
+  const slug = parts[0]!;
   const info = MODULE_NAMES[slug];
   if (!info) return null;
 

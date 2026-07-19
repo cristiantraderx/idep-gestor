@@ -215,7 +215,7 @@ export function Sidebar({
 // Desktop sidebar content (extracted for reuse with collapse)
 function DesktopContent({
   isCollapsed,
-  _activeSection,
+  activeSection: _activeSection,
   openSubMenus,
   onToggleCollapse,
   onNavigate,

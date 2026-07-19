@@ -118,7 +118,7 @@ export function useCrud<T extends { id: string }>(
       if (mainRes.data) {
         const mapped = mapRow
           ? mainRes.data.map((row: unknown) => mapRow(row))
-          : (mainRes.data as T[]);
+          : (mainRes.data as unknown as T[]);
         setData(mapped);
       }
 

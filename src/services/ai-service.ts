@@ -269,7 +269,7 @@ export async function sendMessageWithTools(
       // Adiciona a resposta do assistente com o tool call
       currentMessages.push({
         role: "assistant",
-        content: response.content || null,
+        content: response.content ?? "",
         tool_call_id: toolCall.id,
       });
 

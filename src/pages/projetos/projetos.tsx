@@ -4,6 +4,7 @@ import {
   Plus,
   Search,
   Loader2,
+  Edit3,
   Trash2,
   RefreshCw,
   CalendarDays,
