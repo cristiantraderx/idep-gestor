@@ -999,6 +999,7 @@ export function AssistantBot() {
 
   // Handle voice input — simplificado: tenta pt-BR, com fallback claro
   const handleVoiceInput = useCallback(() => {
+    // Obtém o construtor do SpeechRecognition (webkit prefix no Chrome/Edge)
     const SpeechRecognitionAPI =
       (window as unknown as Window & { webkitSpeechRecognition?: typeof SpeechRecognition }).SpeechRecognition ??
       (window as unknown as Window & { webkitSpeechRecognition?: typeof SpeechRecognition }).webkitSpeechRecognition;
@@ -1022,7 +1023,6 @@ export function AssistantBot() {
 
     // Se já está gravando ou transcrevendo, para/cancela
     if (isListening || isTranscribing) {
-      // Cancela timeout de transcrição pendente (usando refs compartilhados entre closures)
       if (transcribeTimerRef.current) {
         clearTimeout(transcribeTimerRef.current);
         transcribeTimerRef.current = null;
@@ -1035,76 +1035,37 @@ export function AssistantBot() {
       return;
     }
 
-    // Tenta o idioma preferido (pt-BR), depois en-US como fallback
-    const langsToTry = [currentLang, "pt-BR", "en-US"];
-    const uniqueLangs = [...new Set(langsToTry)];
-    let langAttemptIndex = 0;
-    let hasResult = false;
-
-    // Reseta refs de cancelamento para uma nova tentativa
+    // Reseta refs de cancelamento
     voiceCancelledRef.current = false;
 
-    function tryNextLang(lastError?: string) {
-      if (hasResult) return;
-      if (langAttemptIndex >= uniqueLangs.length) {
-        // Esgotou todos os idiomas sem sucesso
-        setIsListening(false);
+    // Usa pt-BR diretamente (sem fallback recursion complexa)
+    const lang = currentLang === "en-US" ? "en-US" : "pt-BR";
 
-        // Mensagem de erro mais específica baseada no último erro
-        let errorMsg = "🎤 **Não foi possível acessar o microfone.** ";
-        if (lastError === "not-allowed" || lastError === "permission-denied") {
-          errorMsg += "Verifique se você permitiu o acesso ao microfone neste site.\n\n📌 **Como corrigir:**\n• Clique no ícone 🔒 ao lado da URL\n• Vá em **Permissões** > **Microfone** > **Permitir**\n• Recarregue a página e tente novamente";
-        } else if (lastError === "no-speech" || lastError === "audio-capture") {
-          errorMsg += "Nenhum microfone encontrado ou áudio não detectado.\n\n📌 **Como corrigir:**\n• Conecte um microfone ao computador\n• Verifique se o microfone não está mudo\n• Tente falar mais alto e mais próximo";
-        } else if (lastError === "aborted") {
-          errorMsg += "A gravação foi interrompida. Tente novamente.";
-        } else if (lastError === "language-not-supported") {
-          errorMsg += "O idioma detectado não é suportado. Tente falar em português.";
-        } else if (lastError === "service-not-allowed") {
-          errorMsg += "O serviço de reconhecimento de voz não está disponível.\n\n📌 **Dica:** Tente usar o Google Chrome ou Microsoft Edge.";
-        } else {
-          errorMsg += "Tente falar mais próximo ao microfone ou digitar sua pergunta.\n\n💡 Se o problema persistir, use **Ctrl+Shift+V** para tentar novamente.";
-        }
+    try {
+      const recognition = new SpeechRecognitionAPI();
+      recognition.lang = lang;
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
 
-        setMessages((prev) => {
-          const updated = [...prev, {
-            id: `bot-${Date.now()}`,
-            type: "bot" as const,
-            text: errorMsg,
-            timestamp: new Date(),
-          }];
-          saveHistory(updated);
-          return updated;
-        });
-        return;
-      }
+      recognition.onresult = (event: SpeechRecognitionEvent) => {
+        try {
+          const result = event.results[0];
+          if (!result || !result[0]) return;
 
-      const lang = uniqueLangs[langAttemptIndex]!;
-      langAttemptIndex++;
-      setCurrentLang(lang);
+          const transcript = result[0].transcript.trim();
+          if (!transcript) return;
 
-      try {
-        const recognition = new SpeechRecognitionAPI();
-        recognition.lang = lang;
-        recognition.continuous = false;
-        recognition.interimResults = false;
-        recognition.maxAlternatives = 1;
-
-        recognition.onresult = (event: SpeechRecognitionEvent) => {
-          if (hasResult) return;
-          hasResult = true;
-
-          const transcript = event.results[0][0].transcript;
           const detectedLang = detectLanguage(transcript);
           setCurrentLang(detectedLang);
           saveLanguagePreference(detectedLang);
 
-          // Fase 1: mostra "Transcrevendo..." enquanto processa
+          // Mostra "Transcrevendo..." enquanto processa
           setIsTranscribing(true);
           recognition.stop();
           recognitionRef.current = null;
 
-          // Fase 2: após breve delay, exibe o resultado
+          // Após breve pausa, processa o comando
           transcribeTimerRef.current = setTimeout(() => {
             if (voiceCancelledRef.current) return;
 
@@ -1113,7 +1074,13 @@ export function AssistantBot() {
             if (voiceCmd) {
               if (voiceCmd.action === "help") {
                 setMessages((prev) => {
-                  const updated = [...prev, { id: `bot-${Date.now()}`, type: "bot", text: getVoiceHelpText(), title: "🎤 Comandos de Voz", timestamp: new Date() }];
+                  const updated = [...prev, {
+                    id: `bot-${Date.now()}`,
+                    type: "bot",
+                    text: getVoiceHelpText(),
+                    title: "🎤 Comandos de Voz",
+                    timestamp: new Date(),
+                  }];
                   saveHistory(updated);
                   return updated;
                 });
@@ -1137,31 +1104,70 @@ export function AssistantBot() {
             setIsListening(false);
             setIsOpen(true);
           }, 350); // breve pausa para feedback visual
-        };
+        } catch (err) {
+          console.error("[Voice] Erro ao processar resultado:", err);
+          setIsTranscribing(false);
+          setIsListening(false);
+        }
+      };
 
-        recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
-          // Finaliza instância com erro e tenta próximo idioma com o código do erro
-          const errorCode = event.error || "unknown";
-          try { recognition.abort(); } catch { /* ignore */ }
-          tryNextLang(errorCode);
-        };
+      recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
+        const errorCode = event.error;
 
-        recognition.onend = () => {
-          if (!hasResult) {
-            setIsListening(false);
-          }
-        };
+        // "no-speech" é normal quando o usuário não fala — só desliga silenciosamente
+        if (errorCode === "no-speech") {
+          setIsListening(false);
+          return;
+        }
 
-        recognitionRef.current = recognition;
-        recognition.start();
-        setIsListening(true);
-      } catch (err: unknown) {
-        // Erro ao criar/starter reconhecimento → próximo idioma
-        tryNextLang(err instanceof Error ? err.name || err.message : "unknown");
-      }
+        // "aborted" quando o usuário clica para cancelar — ignora
+        if (errorCode === "aborted") {
+          setIsListening(false);
+          return;
+        }
+
+        // Erros que merecem mensagem
+        console.error("[Voice] Erro:", errorCode, event.message || "");
+
+        let errorMsg = "🎤 **Não foi possível acessar o microfone.** ";
+        if (errorCode === "not-allowed" || errorCode === "permission-denied") {
+          errorMsg += "Permissão negada. Clique no ícone 🔒 ao lado da URL > Permissões > Microfone > Permitir.";
+        } else if (errorCode === "audio-capture") {
+          errorMsg += "Nenhum microfone encontrado. Conecte um microfone e tente novamente.";
+        } else if (errorCode === "service-not-allowed") {
+          errorMsg += "Serviço de reconhecimento de voz indisponível. Tente usar Chrome ou Edge.";
+        } else {
+          errorMsg += `Erro: ${errorCode}. Tente novamente ou digite sua pergunta.`;
+        }
+
+        setMessages((prev) => {
+          const updated = [...prev, {
+            id: `bot-${Date.now()}`,
+            type: "bot",
+            text: errorMsg,
+            timestamp: new Date(),
+          }];
+          saveHistory(updated);
+          return updated;
+        });
+
+        setIsListening(false);
+      };
+
+      recognition.onend = () => {
+        // Só desliga se não tiver sido cancelado
+        if (!voiceCancelledRef.current) {
+          setIsListening(false);
+        }
+      };
+
+      recognitionRef.current = recognition;
+      recognition.start();
+      setIsListening(true);
+    } catch (err) {
+      console.error("[Voice] Erro ao iniciar:", err);
+      setIsListening(false);
     }
-
-    tryNextLang();
   }, [isListening, currentLang, navigate]);
 
   // Mantém a ref do handler de voz atualizada (evita TDZ no useEffect do teclado)

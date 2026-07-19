@@ -9,12 +9,12 @@
     "dev": "vite",
     "build": "vite build",
     "typecheck": "tsc -b",
+    "typecheck:strict": "tsc --noEmit",
     "preview": "vite preview",
     "lint": "eslint .",
     "test": "vitest",
     "test:ui": "vitest --ui",
-    "test:coverage": "vitest --coverage",
-    "typecheck": "tsc --noEmit"
+    "test:coverage": "vitest --coverage"
   },
   "dependencies": {
     "@fontsource/geist-sans": "^5.2.5",
